@@ -1,61 +1,25 @@
 import { motion } from "framer-motion";
-import { useEffect, useState } from "react";
-import { GRID_HEIGHT, GRID_WIDTH, TILES } from "./constants";
-import { generateTunnels } from "./helpers/generateTunnels";
-import { DepthMap, GridMap, Position, RevealedMap, TileType } from "./types";
-import {
-  getRevealedAdjacent,
-  canMoveToPosition,
-} from "./helpers/mapOperations";
+import { useEffect } from "react";
+import { useSnapshot } from "valtio";
+import { TILES } from "./constants";
+import { useTravelStore } from "./store";
+import { DepthMap, Position, RevealedMap, TileType } from "./store/state";
 
 const ChartingMap = () => {
-  //State
-  const [grid, setGrid] = useState<GridMap>([]);
-  const [depth, setDepth] = useState<DepthMap>({});
-  const [playerPos, setPlayerPos] = useState<Position>({
-    x: 0,
-    y: GRID_HEIGHT / 2,
-  });
-  const [revealed, setRevealed] = useState<RevealedMap>({});
+  const store = useTravelStore();
+  const snap = useSnapshot(store.state);
 
-  //Actions
-  const revealAdjacent = (x: number, y: number): void => {
-    const newRevealed = getRevealedAdjacent(x, y, grid, revealed);
-    setRevealed(newRevealed);
-  };
-
-  const movePlayer = (x: number, y: number): void => {
-    if (canMoveToPosition(x, y, playerPos, grid)) {
-      setPlayerPos({ x, y });
-      setRevealed((prev) => ({ ...prev, [`${x},${y}`]: true }));
-      revealAdjacent(x, y);
-      //trigger events
-    }
-  };
-
-  //Component Init
-  const initializeGrid = () => {
-    const startY = Math.floor(GRID_HEIGHT / 2);
-    const endY = Math.floor(GRID_HEIGHT / 2);
-
-    const {
-      grid: newGrid,
-      depth: newDepth,
-      revealed: initialRevealed,
-    } = generateTunnels(0, startY, GRID_WIDTH - 1, endY);
-
-    setGrid(newGrid);
-    setDepth(newDepth);
-    setRevealed(initialRevealed);
-  };
+  const { grid, depth, revealed, playerPos, isInitialized } = snap;
+  const { initializeGrid, movePlayer } = store;
 
   useEffect(() => {
-    initializeGrid();
+    if (!isInitialized) {
+      initializeGrid();
+    }
   }, []);
 
   return (
     <div className="flex">
-      {/* Left Side, Map */}
       <div className="flex flex-col space-y-2">
         {/* Header */}
         <div className="p-2 text-gray-200 bg-gray-900">
@@ -66,7 +30,7 @@ const ChartingMap = () => {
         {grid && grid.length > 0 && (
           <div className="flex flex-col space-y-2">
             <ChartingGrid
-              grid={grid}
+              grid={grid as TileType[][]}
               depth={depth}
               revealed={revealed}
               playerPos={playerPos}
@@ -82,7 +46,6 @@ const ChartingMap = () => {
       </div>
 
       {/* Debug Menu */}
-      {/* 1. Has a reset button */}
       <div className="flex flex-col space-y-2 ml-4 bg-gray-900 p-4 rounded w-[20rem]">
         <button
           className="mt-4 p-2 bg-gray-800 text-gray-200 rounded"
@@ -91,7 +54,6 @@ const ChartingMap = () => {
           Reset
         </button>
 
-        {/* Render debug information here */}
         <div>
           {/* About the grid */}
           <h3 className="text-lg font-bold">Debug Information</h3>

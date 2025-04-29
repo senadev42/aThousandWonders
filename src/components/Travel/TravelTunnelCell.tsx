@@ -1,5 +1,8 @@
 import { motion } from "framer-motion";
-import { TileType, GridPosition } from "./store/state";
+import { TileType, GridPosition, RevealedMap } from "./store/state";
+import { TILES } from "./constants";
+import { useTravelStore } from "./store";
+import { useMemo } from "react";
 
 // Cell Component
 type TravelTunnelCellProps = {
@@ -8,40 +11,47 @@ type TravelTunnelCellProps = {
   cell: TileType;
   depth: number;
   isRevealed: boolean;
-  isWall: boolean;
-  isAdjacent: boolean;
-  isPlayerHere: boolean;
   playerPos: GridPosition;
   onMove: () => void;
 };
 
 const TravelTunnelCell = (props: TravelTunnelCellProps) => {
-  const { depth, isRevealed, isWall, isAdjacent, isPlayerHere, cell, onMove } =
-    props;
+  const { x, y, cell, onMove, playerPos, isRevealed } = props;
 
-  const getDepthColor = (depthValue: number) => {
-    if (depthValue < 0.3) return "bg-gray-700";
-    if (depthValue < 0.6) return "bg-gray-800";
-    if (depthValue < 0.8) return "bg-gray-900";
-    return "bg-black";
-  };
+  const isWall = cell === TILES.WALL;
+
+  const isAdjacent =
+    playerPos &&
+    Math.abs(x - playerPos.x) + Math.abs(y - playerPos.y) === 1 &&
+    !isWall;
+
+  const isPlayerHere = playerPos?.x === x && playerPos?.y === y;
+
+  const { setHoveredCell } = useTravelStore();
 
   return (
-    <motion.div
-      className={`
-          w-12 h-12
-          flex items-center justify-center
-          ${getDepthColor(depth)}
-          ${isAdjacent ? "cursor-pointer" : ""}
-          ${isWall ? "opacity-0" : isRevealed ? "opacity-100" : "opacity-5"}
-        `}
+    <div
+      className={`w-10 h-10 relative flex items-center justify-center bg-gray-500
+      hover:brightness-105
+      ${isAdjacent ? "cursor-pointer hover:brightness-125" : ""}
+      ${isWall ? "opacity-0" : isRevealed ? "opacity-100" : "opacity-10"}
+    `}
       onClick={isAdjacent ? onMove : undefined}
-      initial={{ scale: 0.8 }}
-      animate={{ scale: 1 }}
-      transition={{ duration: 0.2 }}
+      onMouseEnter={() => {
+        setHoveredCell({ x, y });
+      }}
     >
-      {isPlayerHere ? <div>🐍</div> : <span>{cell}</span>}
-    </motion.div>
+      <span className="absolute inset-0 flex items-center justify-center z-0 text-xs">
+        {x},{y}
+      </span>
+      <div className="relative z-10 flex items-center justify-center text-2xl">
+        {isPlayerHere ? (
+          <div className="bg-green-500 w-6 h-6 border-4 border-black"></div>
+        ) : (
+          <span>{cell}</span>
+        )}
+      </div>
+    </div>
   );
 };
 

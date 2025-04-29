@@ -8,6 +8,14 @@ export interface TravelState {
   depth: DepthMap;
   playerPos: GridPosition;
   revealed: RevealedMap;
+  //Debug stuff
+  hoveredCell: GridPosition | null;
+
+  //getters
+  debugInfo: {
+    hoveredCell: string;
+    playerPosition: string;
+  };
 }
 
 const travelState = proxy<TravelState>({
@@ -19,12 +27,21 @@ const travelState = proxy<TravelState>({
     y: GRID_HEIGHT / 2,
   },
   revealed: {},
+  hoveredCell: null,
+
+  //getters
+  get debugInfo() {
+    return {
+      hoveredCell: `X: ${this.hoveredCell?.x} Y: ${this.hoveredCell?.y}`,
+      playerPosition: `X: ${this.playerPos.x} Y: ${this.playerPos.y}`,
+    };
+  },
 });
 
 export const useTravelState = () => travelState;
 
 //types
-export type TileType = "⬛" | "🏛️" | "💎" | "💀" | "🟢" | "🔴" | " ";
+export type TileType = "⬛" | "🏛️" | "💎" | "💀" | "A" | "B" | " ";
 
 export type GridMap = TileType[][];
 

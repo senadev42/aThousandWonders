@@ -1,15 +1,11 @@
 import { useEffect } from "react";
-import { useSnapshot } from "valtio";
+import { proxy, useSnapshot } from "valtio";
 import { useTravelStore } from "./store";
-import { TileType } from "./store/state";
 import TravelTunnelGrid from "./TravelTunnelGrid";
 
 const TravelTunnelMap = () => {
-  const store = useTravelStore();
-  const { grid, depth, revealed, playerPos, isInitialized } = useSnapshot(
-    store.state
-  );
-  const { initializeGrid, movePlayer } = store;
+  const { state: travelState, initializeGrid } = useTravelStore();
+  const { isInitialized, debugInfo } = useSnapshot(travelState);
 
   useEffect(() => {
     if (!isInitialized) {
@@ -18,23 +14,17 @@ const TravelTunnelMap = () => {
   }, []);
 
   return (
-    <div className="flex">
-      <div className="flex flex-col space-y-2">
+    <div className="flex lg:flex-row flex-col gap-2">
+      <div className="flex flex-col space-y-2 m-10 md:m-auto">
         {/* Header */}
         <div className="p-2 text-gray-200 bg-gray-900">
           <h2 className="text-xl font-bold">Charting: A → B</h2>
         </div>
 
         {/* Charting Grid */}
-        {grid && grid.length > 0 && (
+        {isInitialized && (
           <div className="flex flex-col space-y-2">
-            <TravelTunnelGrid
-              grid={grid as TileType[][]}
-              depth={depth}
-              revealed={revealed}
-              playerPos={playerPos}
-              movePlayer={movePlayer}
-            />
+            <TravelTunnelGrid />
           </div>
         )}
 
@@ -45,22 +35,19 @@ const TravelTunnelMap = () => {
       </div>
 
       {/* Debug Menu */}
-      <div className="flex flex-col space-y-2 ml-4 bg-gray-900 p-4 rounded w-[20rem]">
+      <div className="flex flex-col space-y-2  bg-gray-900 p-4 rounded lg:w-[20rem] text-black">
         <button
-          className="mt-4 p-2 bg-gray-800 text-gray-200 rounded"
+          className="mt-4 p-2 bg-gray-800 text-gray-200 rounded hover:bg-gray-700"
           onClick={initializeGrid}
         >
-          Reset
+          Reset Grid
         </button>
 
-        <div>
-          {/* About the grid */}
-          <h3 className="text-lg font-bold">Debug Information</h3>
-          <p>
-            Grid Size: {grid.length} x {grid[0]?.length}
-          </p>
-          <p>Player Position: {`(${playerPos.x}, ${playerPos.y})`}</p>
-          <p>Revealed Tiles: {Object.keys(revealed).length}</p>
+        {/* Debug Information */}
+        <div className="text-gray-200">
+          {/* Cell being hovered over */}
+          <p>Hovering on: {debugInfo.hoveredCell}</p>
+          <p>Player position: {debugInfo.playerPosition}</p>
         </div>
       </div>
     </div>

@@ -1,5 +1,5 @@
 // actions.ts
-import { useTravelState } from "./state";
+import { GridPosition, useTravelState } from "./state";
 import { generateTunnels } from "../helpers/generateTunnels";
 import { GRID_HEIGHT, GRID_WIDTH } from "../constants";
 import {
@@ -33,15 +33,28 @@ export const useTravelActions = () => {
 
   const movePlayer = (x: number, y: number): void => {
     if (canMoveToGridPosition(x, y, state.playerPos, state.grid)) {
+      // Batch all reveal operations into one update
+      const newRevealed = {
+        ...state.revealed,
+        [`${x},${y}`]: true,
+        ...getRevealedAdjacent(x, y, state.grid, state.revealed),
+      };
+
+      // Update state once with all changes
       state.playerPos = { x, y };
-      state.revealed[`${x},${y}`] = true;
-      revealAdjacent(x, y);
+      state.revealed = newRevealed;
     }
+  };
+
+  //Debug State
+  const setHoveredCell = (pos: GridPosition | null) => {
+    state.hoveredCell = pos;
   };
 
   return {
     initializeGrid,
     movePlayer,
     revealAdjacent,
+    setHoveredCell,
   };
 };

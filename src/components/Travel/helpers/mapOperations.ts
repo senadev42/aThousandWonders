@@ -1,6 +1,11 @@
 // helpers/mapOperations.ts
 import { GRID_HEIGHT, GRID_WIDTH, TILES } from "../constants";
-import { CoordString, GridMap, GridPosition, RevealedMap } from "../types";
+import {
+  CoordString,
+  GridMap,
+  GridPosition,
+  RevealedMap,
+} from "../store/state";
 
 export const getAdjacentTiles = (x: number, y: number): GridPosition[] => {
   return [

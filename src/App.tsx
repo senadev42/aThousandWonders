@@ -1,9 +1,9 @@
-import ChartingMap from "./components/Travel/ChartingMap";
+import TravelTunnelMap from "./components/Travel/TravelTunnelMap";
 
 function App() {
   return (
     <div className="flex items-center justify-center min-h-screen w-full">
-      <ChartingMap />
+      <TravelTunnelMap />
     </div>
   );
 }

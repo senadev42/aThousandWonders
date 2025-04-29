@@ -6,7 +6,7 @@ export interface TravelState {
   isInitialized: boolean;
   grid: GridMap;
   depth: DepthMap;
-  playerPos: Position;
+  playerPos: GridPosition;
   revealed: RevealedMap;
 }
 
@@ -28,7 +28,7 @@ export type TileType = "⬛" | "🏛️" | "💎" | "💀" | "🟢" | "🔴" | "
 
 export type GridMap = TileType[][];
 
-export type Position = {
+export type GridPosition = {
   x: number;
   y: number;
 };

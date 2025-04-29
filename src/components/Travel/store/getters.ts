@@ -1,14 +1,14 @@
 // getters.ts
 import { useTravelState } from "./state";
-import { Position } from "./state";
-import { canMoveToPosition } from "../helpers/mapOperations";
+import { GridPosition } from "./state";
+import { canMoveToGridPosition } from "../helpers/mapOperations";
 
 export const useTravelGetters = () => {
   const state = useTravelState();
 
-  const isValidMove = (pos: Position) => {
+  const isValidMove = (pos: GridPosition) => {
     const { grid, playerPos } = state;
-    return canMoveToPosition(pos.x, pos.y, playerPos, grid);
+    return canMoveToGridPosition(pos.x, pos.y, playerPos, grid);
   };
 
   const getRevealedTileCount = () => {
@@ -22,7 +22,7 @@ export const useTravelGetters = () => {
 
   const getAdjacentTiles = () => {
     const { playerPos, grid } = state;
-    const adjacent: Position[] = [];
+    const adjacent: GridPosition[] = [];
 
     const directions = [
       [-1, 0],
@@ -33,7 +33,7 @@ export const useTravelGetters = () => {
     for (const [dx, dy] of directions) {
       const newX = playerPos.x + dx;
       const newY = playerPos.y + dy;
-      if (canMoveToPosition(newX, newY, playerPos, grid)) {
+      if (canMoveToGridPosition(newX, newY, playerPos, grid)) {
         adjacent.push({ x: newX, y: newY });
       }
     }

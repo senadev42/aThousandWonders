@@ -4,7 +4,7 @@ import { generateTunnels } from "../helpers/generateTunnels";
 import { GRID_HEIGHT, GRID_WIDTH } from "../constants";
 import {
   getRevealedAdjacent,
-  canMoveToPosition,
+  canMoveToGridPosition,
 } from "../helpers/mapOperations";
 
 export const useTravelActions = () => {
@@ -32,7 +32,7 @@ export const useTravelActions = () => {
   };
 
   const movePlayer = (x: number, y: number): void => {
-    if (canMoveToPosition(x, y, state.playerPos, state.grid)) {
+    if (canMoveToGridPosition(x, y, state.playerPos, state.grid)) {
       state.playerPos = { x, y };
       state.revealed[`${x},${y}`] = true;
       revealAdjacent(x, y);

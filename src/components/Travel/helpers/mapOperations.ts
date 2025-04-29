@@ -1,8 +1,8 @@
 // helpers/mapOperations.ts
 import { GRID_HEIGHT, GRID_WIDTH, TILES } from "../constants";
-import { CoordString, GridMap, Position, RevealedMap } from "../types";
+import { CoordString, GridMap, GridPosition, RevealedMap } from "../types";
 
-export const getAdjacentTiles = (x: number, y: number): Position[] => {
+export const getAdjacentTiles = (x: number, y: number): GridPosition[] => {
   return [
     { x: x - 1, y },
     { x: x + 1, y },
@@ -11,11 +11,11 @@ export const getAdjacentTiles = (x: number, y: number): Position[] => {
   ];
 };
 
-export const isValidPosition = (x: number, y: number): boolean => {
+export const isValidGridPosition = (x: number, y: number): boolean => {
   return x >= 0 && x < GRID_WIDTH && y >= 0 && y < GRID_HEIGHT;
 };
 
-export const isAdjacent = (pos1: Position, pos2: Position): boolean => {
+export const isAdjacent = (pos1: GridPosition, pos2: GridPosition): boolean => {
   return Math.abs(pos1.x - pos2.x) + Math.abs(pos1.y - pos2.y) === 1;
 };
 
@@ -33,7 +33,7 @@ export const getRevealedAdjacent = (
   const newRevealed = { ...currentRevealed };
 
   adjacent.forEach((pos) => {
-    if (!isValidPosition(pos.x, pos.y)) return;
+    if (!isValidGridPosition(pos.x, pos.y)) return;
     if (!isWalkable(grid, pos.x, pos.y)) return;
 
     const coordKey = `${pos.x},${pos.y}` as CoordString;
@@ -43,16 +43,16 @@ export const getRevealedAdjacent = (
   return newRevealed;
 };
 
-export const canMoveToPosition = (
+export const canMoveToGridPosition = (
   targetX: number,
   targetY: number,
-  currentPos: Position,
+  currentPos: GridPosition,
   grid: GridMap
 ): boolean => {
   if (!currentPos) return false;
 
   return (
-    isValidPosition(targetX, targetY) &&
+    isValidGridPosition(targetX, targetY) &&
     isAdjacent(currentPos, { x: targetX, y: targetY }) &&
     isWalkable(grid, targetX, targetY)
   );

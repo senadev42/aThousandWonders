@@ -2,19 +2,38 @@ import { motion } from "framer-motion";
 import { useEffect, useState } from "react";
 import { GRID_HEIGHT, GRID_WIDTH, TILES } from "./constants";
 import { generateTunnels } from "./helpers/generateTunnels";
-import { CoordString, DepthMap, GridMap, Position, RevealedMap } from "./types";
+import { DepthMap, GridMap, Position, RevealedMap, TileType } from "./types";
+import {
+  getRevealedAdjacent,
+  canMoveToPosition,
+} from "./helpers/mapOperations";
 
 const ChartingMap = () => {
-  //Map
+  //State
   const [grid, setGrid] = useState<GridMap>([]);
   const [depth, setDepth] = useState<DepthMap>({});
-
-  //player position
-  const [playerPos, setPlayerPos] = useState<Position | null>(null);
-
+  const [playerPos, setPlayerPos] = useState<Position>({
+    x: 0,
+    y: GRID_HEIGHT / 2,
+  });
   const [revealed, setRevealed] = useState<RevealedMap>({});
-  const [knownPath, setKnownPath] = useState(new Set());
 
+  //Actions
+  const revealAdjacent = (x: number, y: number): void => {
+    const newRevealed = getRevealedAdjacent(x, y, grid, revealed);
+    setRevealed(newRevealed);
+  };
+
+  const movePlayer = (x: number, y: number): void => {
+    if (canMoveToPosition(x, y, playerPos, grid)) {
+      setPlayerPos({ x, y });
+      setRevealed((prev) => ({ ...prev, [`${x},${y}`]: true }));
+      revealAdjacent(x, y);
+      //trigger events
+    }
+  };
+
+  //Component Init
   const initializeGrid = () => {
     const startY = Math.floor(GRID_HEIGHT / 2);
     const endY = Math.floor(GRID_HEIGHT / 2);
@@ -22,68 +41,17 @@ const ChartingMap = () => {
     const {
       grid: newGrid,
       depth: newDepth,
-      knownPath: newKnownPath,
       revealed: initialRevealed,
     } = generateTunnels(0, startY, GRID_WIDTH - 1, endY);
 
     setGrid(newGrid);
     setDepth(newDepth);
-    setPlayerPos({ x: 0, y: startY });
-    setKnownPath(newKnownPath);
     setRevealed(initialRevealed);
   };
 
   useEffect(() => {
     initializeGrid();
   }, []);
-
-  const getDepthColor = (depthValue: number) => {
-    if (depthValue < 0.3) return "bg-gray-700";
-    if (depthValue < 0.6) return "bg-gray-800";
-    if (depthValue < 0.8) return "bg-gray-900";
-    return "bg-black";
-  };
-
-  const revealAdjacent = (x: number, y: number): void => {
-    const adjacent: Position[] = [
-      { x: x - 1, y },
-      { x: x + 1, y },
-      { x, y: y - 1 },
-      { x, y: y + 1 },
-    ];
-
-    const newRevealed: RevealedMap = { ...revealed };
-
-    adjacent.forEach((pos) => {
-      if (pos.x < 0 || pos.x >= GRID_WIDTH) return;
-      if (pos.y < 0 || pos.y >= GRID_HEIGHT) return;
-      if (grid[pos.y][pos.x] === TILES.WALL) return;
-
-      const coordKey = `${pos.x},${pos.y}` as CoordString;
-      newRevealed[coordKey] = true;
-    });
-
-    setRevealed(newRevealed);
-  };
-
-  const movePlayer = (x: number, y: number): void => {
-    if (!playerPos) return;
-
-    const isValidPosition =
-      x >= 0 && x < GRID_WIDTH && y >= 0 && y < GRID_HEIGHT;
-
-    const isAdjacent =
-      Math.abs(x - playerPos.x) + Math.abs(y - playerPos.y) === 1;
-
-    const isWalkable = grid[y]?.[x] !== TILES.WALL;
-
-    if (isValidPosition && isAdjacent && isWalkable) {
-      setPlayerPos({ x, y });
-      setRevealed((prev) => ({ ...prev, [`${x},${y}`]: true }));
-      revealAdjacent(x, y);
-      //trigger events
-    }
-  };
 
   return (
     <div className="flex">
@@ -95,61 +63,17 @@ const ChartingMap = () => {
         </div>
 
         {/* Charting Grid */}
-        <div
-          className="grid bg-gray-950 rounded"
-          style={{
-            gridTemplateColumns: `repeat(${GRID_WIDTH}, minmax(0, 1fr))`,
-          }}
-        >
-          {grid.map((row, y) =>
-            row.map((cell, x: number) => {
-              const isRevealed =
-                revealed[`${x},${y}`] ||
-                cell === TILES.START ||
-                cell === TILES.END;
-
-              const isWall = cell === TILES.WALL;
-
-              const isAdjacent =
-                playerPos &&
-                Math.abs(x - playerPos.x) + Math.abs(y - playerPos.y) === 1 &&
-                !isWall;
-
-              return (
-                <motion.div
-                  key={`${x}-${y}`}
-                  className={`
-                                        aspect-square
-                                        flex items-center justify-center
-                                        text-2xl
-                                        ${getDepthColor(
-                                          depth[`${x},${y}`] || 0
-                                        )}
-                                        ${
-                                          isAdjacent
-                                            ? "cursor-pointer hover:opacity-80"
-                                            : ""
-                                        }
-                                        ${
-                                          isWall
-                                            ? "opacity-0"
-                                            : isRevealed
-                                            ? "opacity-100"
-                                            : "opacity-5"
-                                        }
-                                           
-                                    `}
-                  onClick={() => (isAdjacent ? movePlayer(x, y) : null)}
-                  initial={{ scale: 0.8 }}
-                  animate={{ scale: 1 }}
-                  transition={{ duration: 0.2 }}
-                >
-                  {playerPos?.x === x && playerPos?.y === y ? "🐍" : cell}
-                </motion.div>
-              );
-            })
-          )}
-        </div>
+        {grid && grid.length > 0 && (
+          <div className="flex flex-col space-y-2">
+            <ChartingGrid
+              grid={grid}
+              depth={depth}
+              revealed={revealed}
+              playerPos={playerPos}
+              movePlayer={movePlayer}
+            />
+          </div>
+        )}
 
         {/* Legend and eventually actions */}
         <div className="text-gray-200 p-2 bg-gray-900 ">
@@ -166,7 +90,115 @@ const ChartingMap = () => {
         >
           Reset
         </button>
+
+        {/* Render debug information here */}
+        <div>
+          {/* About the grid */}
+          <h3 className="text-lg font-bold">Debug Information</h3>
+          <p>
+            Grid Size: {grid.length} x {grid[0]?.length}
+          </p>
+          <p>Player Position: {`(${playerPos.x}, ${playerPos.y})`}</p>
+          <p>Revealed Tiles: {Object.keys(revealed).length}</p>
+        </div>
       </div>
+    </div>
+  );
+};
+
+// Cell Component
+type MapCellProps = {
+  x: number;
+  y: number;
+  cell: TileType;
+  depth: number;
+  isRevealed: boolean;
+  isWall: boolean;
+  isAdjacent: boolean;
+  isPlayerHere: boolean;
+  onMove: () => void;
+};
+
+const MapCell = (props: MapCellProps) => {
+  const { depth, isRevealed, isWall, isAdjacent, isPlayerHere, cell, onMove } =
+    props;
+
+  const getDepthColor = (depthValue: number) => {
+    if (depthValue < 0.3) return "bg-gray-700";
+    if (depthValue < 0.6) return "bg-gray-800";
+    if (depthValue < 0.8) return "bg-gray-900";
+    return "bg-black";
+  };
+
+  return (
+    <motion.div
+      className={`
+        w-12 h-12
+        flex items-center justify-center
+        ${getDepthColor(depth)}
+        ${isAdjacent ? "cursor-pointer" : ""}
+        ${isWall ? "opacity-0" : isRevealed ? "opacity-100" : "opacity-5"}
+      `}
+      onClick={isAdjacent ? onMove : undefined}
+      initial={{ scale: 0.8 }}
+      animate={{ scale: 1 }}
+      transition={{ duration: 0.2 }}
+    >
+      {isPlayerHere ? <div>🐍</div> : <span>{cell}</span>}
+    </motion.div>
+  );
+};
+
+// Grid Component
+
+type ChartingGridProps = {
+  grid: TileType[][];
+  depth: DepthMap;
+  revealed: RevealedMap;
+  playerPos: Position;
+  movePlayer: (x: number, y: number) => void;
+};
+
+const ChartingGrid = (props: ChartingGridProps) => {
+  const { grid, depth, revealed, playerPos, movePlayer } = props;
+
+  return (
+    <div
+      className="grid bg-gray-950 rounded overflow-auto p-1"
+      style={{
+        gridTemplateColumns: `repeat(${grid[0].length}, minmax(0, 1fr))`,
+      }}
+    >
+      {grid.map((row, y) =>
+        row.map((cell, x) => {
+          const isRevealed =
+            revealed[`${x},${y}`] || cell === TILES.START || cell === TILES.END;
+
+          const isWall = cell === TILES.WALL;
+
+          const isAdjacent =
+            playerPos &&
+            Math.abs(x - playerPos.x) + Math.abs(y - playerPos.y) === 1 &&
+            !isWall;
+
+          const isPlayerHere = playerPos?.x === x && playerPos?.y === y;
+
+          return (
+            <MapCell
+              key={`${x}-${y}`}
+              x={x}
+              y={y}
+              cell={cell}
+              depth={depth[`${x},${y}`] || 0}
+              isRevealed={isRevealed}
+              isWall={isWall}
+              isAdjacent={isAdjacent}
+              isPlayerHere={isPlayerHere}
+              onMove={() => movePlayer(x, y)}
+            />
+          );
+        })
+      )}
     </div>
   );
 };

@@ -1,11 +1,11 @@
 import { useEffect } from "react";
-import { proxy, useSnapshot } from "valtio";
+import { useSnapshot } from "valtio";
 import { useTravelStore } from "./store";
 import TravelTunnelGrid from "./TravelTunnelGrid";
 
 const TravelTunnelMap = () => {
-  const { state: travelState, initializeGrid } = useTravelStore();
-  const { isInitialized, debugInfo } = useSnapshot(travelState);
+  const { state, initializeGrid } = useTravelStore();
+  const { isInitialized, debugInfo } = useSnapshot(state);
 
   useEffect(() => {
     if (!isInitialized) {
@@ -14,7 +14,7 @@ const TravelTunnelMap = () => {
   }, []);
 
   return (
-    <div className="flex lg:flex-row flex-col gap-2">
+    <div className="flex md:flex-row flex-col gap-2">
       <div className="flex flex-col space-y-2 m-10 md:m-auto">
         {/* Header */}
         <div className="p-2 text-gray-200 bg-gray-900">
@@ -27,15 +27,10 @@ const TravelTunnelMap = () => {
             <TravelTunnelGrid />
           </div>
         )}
-
-        {/* Legend and eventually actions */}
-        <div className="text-gray-200 p-2 bg-gray-900 ">
-          <p>🐍 Le Serpent</p>
-        </div>
       </div>
 
       {/* Debug Menu */}
-      <div className="flex flex-col space-y-2  bg-gray-900 p-4 rounded lg:w-[20rem] text-black">
+      <div className="flex flex-col space-y-2  bg-gray-900 p-4 rounded min-w-[20rem] text-black">
         <button
           className="mt-4 p-2 bg-gray-800 text-gray-200 rounded hover:bg-gray-700"
           onClick={initializeGrid}
@@ -44,10 +39,10 @@ const TravelTunnelMap = () => {
         </button>
 
         {/* Debug Information */}
-        <div className="text-gray-200">
+        <div className="text-gray-200 w-full">
           {/* Cell being hovered over */}
-          <p>Hovering on: {debugInfo.hoveredCell}</p>
           <p>Player position: {debugInfo.playerPosition}</p>
+          <p>Seed: {debugInfo.seed}</p>
         </div>
       </div>
     </div>

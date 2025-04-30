@@ -1,61 +1,66 @@
 // state.ts
 import { proxy } from "valtio";
-import { GRID_HEIGHT, GRID_WIDTH } from "../constants";
+import { GRID_HEIGHT } from "../constants";
 
-export interface TravelState {
+export type TacticalGridCell = {
+  type: BaseCellType;
+  depth: number;
+  feature: FeatureType | null;
+  revealed: boolean;
+};
+
+export type TacticalGridMap = TacticalGridCell[][];
+
+interface TacticalMapState {
   isInitialized: boolean;
-  grid: GridMap;
-  depth: DepthMap;
-  playerPos: GridPosition;
-  revealed: RevealedMap;
-  //Debug stuff
-  hoveredCell: GridPosition | null;
+  seed: number;
+  tacticalGridMap: TacticalGridMap;
+  playerPosition: GridPosition;
 
   //getters
   debugInfo: {
-    hoveredCell: string;
     playerPosition: string;
+    seed: number;
   };
 }
 
-const travelState = proxy<TravelState>({
+export const tacticalMapState = proxy<TacticalMapState>({
   isInitialized: false,
-  grid: [],
-  depth: {},
-  playerPos: {
+  seed: 0,
+  tacticalGridMap: [],
+  playerPosition: {
     x: 0,
-    y: GRID_HEIGHT / 2,
+    y: Math.round(GRID_HEIGHT / 2),
   },
-  revealed: {},
-  hoveredCell: null,
 
-  //getters
   get debugInfo() {
     return {
-      hoveredCell: `X: ${this.hoveredCell?.x} Y: ${this.hoveredCell?.y}`,
-      playerPosition: `X: ${this.playerPos.x} Y: ${this.playerPos.y}`,
+      playerPosition: `X: ${this.playerPosition.x} Y: ${this.playerPosition.y}`,
+      seed: this.seed,
     };
   },
 });
 
-export const useTravelState = () => travelState;
+export const useTacticalMapState = () => tacticalMapState;
 
-//types
-export type TileType = "⬛" | "🏛️" | "💎" | "💀" | "A" | "B" | " ";
+export type BaseCellType = "wall" | "tunnel";
 
-export type GridMap = TileType[][];
+export type FeatureType =
+  | "ruin"
+  | "crystal"
+  | "danger"
+  | "start"
+  | "end"
+  | null;
 
 export type GridPosition = {
   x: number;
   y: number;
 };
 
-export type DepthMap = {
-  [key: string]: number;
-};
-
+//types
 export type CoordString = `${number},${number}`;
 
-export type RevealedMap = {
-  [key in CoordString]: boolean;
-};
+export type BaseTile = "wall" | "tunnel";
+
+export type BaseGridMap = BaseTile[][];

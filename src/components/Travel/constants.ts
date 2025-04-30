@@ -1,14 +1,25 @@
-import { TileType } from "./store/state";
+export const GRID_WIDTH = 15;
+export const GRID_HEIGHT = 13;
 
-export const GRID_WIDTH = 20;
-export const GRID_HEIGHT = 12;
+export const BASE_TILES = {
+  WALL: "wall",
+  TUNNEL: "tunnel",
+} as const;
 
-export const TILES: Record<string, TileType> = {
-  WALL: "⬛",
-  TUNNEL: " ",
-  RUIN: "🏛️",
-  CRYSTAL: "💎",
-  DANGER: "💀",
-  START: "A",
-  END: "B",
-};
+export const FEATURES = {
+  RUIN: "ruin",
+  CRYSTAL: "crystal",
+  DANGER: "danger",
+  START: "start",
+  END: "end",
+} as const;
+
+export const TILE_VISUALS = {
+  [BASE_TILES.WALL]: " ",
+  [BASE_TILES.TUNNEL]: " ",
+  [FEATURES.RUIN]: "🏛️",
+  [FEATURES.CRYSTAL]: "💎",
+  [FEATURES.DANGER]: "💀",
+  [FEATURES.START]: "A",
+  [FEATURES.END]: "B",
+} as const;

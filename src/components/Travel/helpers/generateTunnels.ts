@@ -1,12 +1,8 @@
-import { GRID_WIDTH, GRID_HEIGHT, TILES } from "../constants";
-import { CoordString, GridMap, RevealedMap } from "../types";
+import { BASE_TILES, FEATURES, GRID_HEIGHT, GRID_WIDTH } from "../constants";
+import { CoordString, TacticalGridCell } from "../store/state";
+import { generateFeatures } from "./generateFeatures";
 
-const SPECIAL_TILE_CHANCE = 0.15; // Base chance for special tiles
-const MAX_BRANCHES = 5; // Number of branching tunnels to attempt
-const BRANCH_LENGTH = 3; // Length of each branch
-const SPECIAL_TILES = [TILES.CRYSTAL, TILES.DANGER, TILES.RUIN]; // Possible special tiles
-
-const getNeighbors = (x: number, y: number, grid: GridMap): number[][] => {
+const getNeighbors = (x: number, y: number): number[][] => {
   const neighbors = [];
   const directions = [
     [-2, 0],
@@ -42,44 +38,73 @@ const illuminateKnownPath = (
   return path;
 };
 
+function createSeededRandom(seed: number) {
+  return function () {
+    seed = (seed * 16807) % 2147483647;
+    return (seed - 1) / 2147483646;
+  };
+}
+
 /**
  * Generates a tunnel system between start and end points with branching paths and special tiles
  * @param startX - Starting X coordinate
  * @param startY - Starting Y coordinate
  * @param endX - Ending X coordinate
  * @param endY - Ending Y coordinate
- * @returns Object containing generated grid, depth map, known path, and revealed tiles
+ * @returns A 2D array representing the tactical grid map with tunnels and features
  */
 export const generateTunnels = (
   startX: number,
   startY: number,
   endX: number,
-  endY: number
-) => {
-  // Initialize grid with walls
-  const newGrid: GridMap = Array(GRID_HEIGHT)
-    .fill(null)
-    .map(() => Array(GRID_WIDTH).fill(TILES.WALL));
+  endY: number,
+  seed: number
+): TacticalGridCell[][] => {
+  const seedRandom = createSeededRandom(seed);
 
-  const newDepth: Record<string, number> = {};
-  const stack = [[startX, startY]];
+  // Initialize grid with walls
+  let newTacticalGridMap: TacticalGridCell[][] = Array.from(
+    { length: GRID_HEIGHT },
+    () =>
+      Array.from({ length: GRID_WIDTH }, () => ({
+        type: BASE_TILES.WALL,
+        depth: 0,
+        feature: null,
+        revealed: false,
+      }))
+  );
+
+  console.log(
+    `Generating tunnels from (${startX}, ${startY}) to (${endX}, ${endY})`
+  );
+
+  const stack = [
+    [startX, startY],
+    [endX, endY],
+  ];
   const visited = new Set();
+
+  // carve a tunnel between them
+  for (let x = startX; x <= endX; x++) {
+    newTacticalGridMap[startY][x] = {
+      type: BASE_TILES.TUNNEL,
+      depth: 0,
+      feature: null,
+      revealed: false,
+    };
+  }
 
   // Main tunnel generation
   while (stack.length > 0) {
     const [currentX, currentY] = stack[stack.length - 1];
-    const coordKey: CoordString = `${currentX},${currentY}`;
 
+    const coordKey = `${currentX},${currentY}`;
     visited.add(coordKey);
 
-    // Calculate depth value (0 at center, 1 at top/bottom edges, for now)
-    const depthValue = Math.abs(currentY - GRID_HEIGHT / 2) / (GRID_HEIGHT / 2);
-    newDepth[coordKey] = depthValue;
-
     // Get unvisited neighbors in random order
-    const neighbors = getNeighbors(currentX, currentY, newGrid)
+    const neighbors = getNeighbors(currentX, currentY)
       .filter(([nx, ny]) => !visited.has(`${nx},${ny}`))
-      .sort(() => Math.random() - 0.5);
+      .sort(() => seedRandom() - 0.5);
 
     if (neighbors.length > 0) {
       const [nextX, nextY] = neighbors[0];
@@ -87,14 +112,9 @@ export const generateTunnels = (
       const midY = (currentY + nextY) / 2;
 
       // Create tunnel segments
-      newGrid[currentY][currentX] = TILES.TUNNEL;
-      newGrid[Math.floor(midY)][Math.floor(midX)] = TILES.TUNNEL;
-
-      // Occasionally place special tiles (more likely deeper in the cave)
-      if (Math.random() < SPECIAL_TILE_CHANCE * (1 + depthValue)) {
-        newGrid[currentY][currentX] =
-          SPECIAL_TILES[Math.floor(Math.random() * SPECIAL_TILES.length)];
-      }
+      newTacticalGridMap[currentY][currentX].type = BASE_TILES.TUNNEL;
+      newTacticalGridMap[Math.floor(midY)][Math.floor(midX)].type =
+        BASE_TILES.TUNNEL;
 
       stack.push([nextX, nextY]);
     } else {
@@ -102,81 +122,18 @@ export const generateTunnels = (
     }
   }
 
-  //Carve the main tunnel
-  let currentX = endX;
-  let currentY = endY;
-  while (currentX > startX) {
-    newGrid[currentY][currentX] = TILES.TUNNEL;
-    currentX -= 1;
-  }
+  newTacticalGridMap = generateFeatures(newTacticalGridMap);
 
   // Mark start and end positions
-  newGrid[startY][startX] = TILES.START;
-  newGrid[endY][endX] = TILES.END;
+  newTacticalGridMap[startY][startX].feature = FEATURES.START;
+  newTacticalGridMap[endY][endX].feature = FEATURES.END;
 
-  // Generate branching tunnels
-  generateBranches(newGrid);
-
-  //Generate the known path forward, wonky
-  const newKnownPath = illuminateKnownPath(startX, startY, endX);
-  const initialRevealed = {} as RevealedMap;
-
-  newKnownPath.forEach((coord: CoordString) => {
-    initialRevealed[coord] = true;
-  });
-
-  return {
-    grid: newGrid,
-    depth: newDepth,
-    knownPath: newKnownPath,
-    revealed: initialRevealed,
-  };
-};
-
-/**
- * Generates branching tunnels from existing tunnels
- */
-const generateBranches = (grid: GridMap) => {
-  // Collect all existing tunnel tiles
-  const tunnelTiles: [number, number][] = [];
-  for (let y = 0; y < GRID_HEIGHT; y++) {
-    for (let x = 0; x < GRID_WIDTH; x++) {
-      if (grid[y][x] === TILES.TUNNEL) {
-        tunnelTiles.push([x, y]);
-      }
-    }
+  //Illuminate the known path forward,
+  let currentX = startX;
+  while (currentX < endX) {
+    currentX++;
+    newTacticalGridMap[startY][currentX].revealed = true;
   }
 
-  // Create several branches from random tunnel points
-  for (let i = 0; i < MAX_BRANCHES && tunnelTiles.length > 0; i++) {
-    const [startX, startY] =
-      tunnelTiles[Math.floor(Math.random() * tunnelTiles.length)];
-    let branchX = startX;
-    let branchY = startY;
-
-    // Grow branch in random directions
-    for (let j = 0; j < BRANCH_LENGTH; j++) {
-      const direction = Math.floor(Math.random() * 4);
-      const [dx, dy] = [
-        [-1, 0], // Left
-        [1, 0], // Right
-        [0, -1], // Up
-        [0, 1], // Down
-      ][direction];
-
-      branchX += dx;
-      branchY += dy;
-
-      // Only carve if within bounds and hitting a wall
-      if (
-        branchX >= 0 &&
-        branchX < GRID_WIDTH &&
-        branchY >= 0 &&
-        branchY < GRID_HEIGHT &&
-        grid[branchY][branchX] === TILES.WALL
-      ) {
-        grid[branchY][branchX] = TILES.TUNNEL;
-      }
-    }
-  }
+  return newTacticalGridMap;
 };

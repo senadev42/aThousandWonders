@@ -1,60 +1,87 @@
 // actions.ts
-import { GridPosition, useTravelState } from "./state";
+import { GridPosition, TacticalGridMap, useTacticalMapState } from "./state";
 import { generateTunnels } from "../helpers/generateTunnels";
 import { GRID_HEIGHT, GRID_WIDTH } from "../constants";
-import {
-  getRevealedAdjacent,
-  canMoveToGridPosition,
-} from "../helpers/mapOperations";
 
 export const useTravelActions = () => {
-  const state = useTravelState();
+  const state = useTacticalMapState();
 
   const initializeGrid = () => {
+    state.isInitialized = false;
     const startY = Math.floor(GRID_HEIGHT / 2);
     const endY = Math.floor(GRID_HEIGHT / 2);
 
-    const {
-      grid: newGrid,
-      depth: newDepth,
-      revealed: initialRevealed,
-    } = generateTunnels(0, startY, GRID_WIDTH - 1, endY);
+    state.seed = Math.floor(Math.random() * 10000);
 
-    state.grid = newGrid;
-    state.depth = newDepth;
-    state.revealed = initialRevealed;
+    state.tacticalGridMap = generateTunnels(
+      0,
+      startY,
+      GRID_WIDTH - 1,
+      endY,
+      state.seed
+    );
+
     state.isInitialized = true;
   };
 
-  const revealAdjacent = (x: number, y: number): void => {
-    const newRevealed = getRevealedAdjacent(x, y, state.grid, state.revealed);
-    state.revealed = newRevealed;
-  };
-
   const movePlayer = (x: number, y: number): void => {
-    if (canMoveToGridPosition(x, y, state.playerPos, state.grid)) {
-      // Batch all reveal operations into one update
-      const newRevealed = {
-        ...state.revealed,
-        [`${x},${y}`]: true,
-        ...getRevealedAdjacent(x, y, state.grid, state.revealed),
-      };
-
-      // Update state once with all changes
-      state.playerPos = { x, y };
-      state.revealed = newRevealed;
-    }
-  };
-
-  //Debug State
-  const setHoveredCell = (pos: GridPosition | null) => {
-    state.hoveredCell = pos;
+    if (!isValidMove(x, y, state.playerPosition, state.tacticalGridMap)) return;
+    state.tacticalGridMap = revealAreaAround(x, y, state.tacticalGridMap);
+    state.playerPosition = { x, y };
   };
 
   return {
     initializeGrid,
     movePlayer,
-    revealAdjacent,
-    setHoveredCell,
   };
 };
+
+function isInBounds(x: number, y: number): boolean {
+  return x >= 0 && x < GRID_WIDTH && y >= 0 && y < GRID_HEIGHT;
+}
+
+function isAdjacent(x: number, y: number, playerPos: GridPosition): boolean {
+  return Math.abs(x - playerPos.x) + Math.abs(y - playerPos.y) === 1;
+}
+
+function isValidMove(
+  targetX: number,
+  targetY: number,
+  playerPos: GridPosition,
+  map: TacticalGridMap
+): boolean {
+  return (
+    isInBounds(targetX, targetY) &&
+    isAdjacent(targetX, targetY, playerPos) &&
+    map[targetY][targetX].type === "tunnel"
+  );
+}
+
+function revealAreaAround(
+  x: number,
+  y: number,
+  tacticalGridMap: TacticalGridMap
+): TacticalGridMap {
+  // Create new map copy
+  const newMap = tacticalGridMap.map((row) =>
+    [...row].map((cell) => ({ ...cell }))
+  );
+
+  // Reveal center and adjacent cells
+  newMap[y][x].revealed = true;
+
+  const adjacentPositions = [
+    [x - 1, y],
+    [x + 1, y],
+    [x, y - 1],
+    [x, y + 1],
+  ].filter(([x, y]) => isInBounds(x, y));
+
+  adjacentPositions.forEach(([adjX, adjY]) => {
+    if (newMap[adjY][adjX].type === "tunnel") {
+      newMap[adjY][adjX].revealed = true;
+    }
+  });
+
+  return newMap;
+}

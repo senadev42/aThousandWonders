@@ -1,5 +1,5 @@
-export const GRID_WIDTH = 15;
-export const GRID_HEIGHT = 13;
+export const GRID_WIDTH = 19;
+export const GRID_HEIGHT = 15;
 
 export const BASE_TILES = {
   WALL: "wall",

@@ -4,7 +4,6 @@ import { GRID_HEIGHT } from "../constants";
 
 export type TacticalGridCell = {
   type: BaseCellType;
-  depth: number;
   feature: FeatureType | null;
   revealed: boolean;
 };

@@ -54,7 +54,8 @@ export function generateFeatures(
     for (let x = 0; x < tacticalGridMap[y].length; x++) {
       // Only place features on tunnel tiles
       if (tacticalGridMap[y][x].type === BASE_TILES.TUNNEL) {
-        const depthValue = tacticalGridMap[y][x].depth;
+        //depth == farther away from middle
+        const depthValue = Math.abs(Math.floor(tacticalGridMap.length / 2) - y);
 
         // Check if we should place a feature here
         const feature = determineFeature(depthValue);

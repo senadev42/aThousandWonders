@@ -21,23 +21,6 @@ const getNeighbors = (x: number, y: number): number[][] => {
   return neighbors;
 };
 
-const illuminateKnownPath = (
-  startX: number,
-  startY: number,
-  endX: number
-): Set<CoordString> => {
-  const path: Set<CoordString> = new Set();
-  let currentX = startX;
-  let currentY = startY;
-
-  while (currentX < endX) {
-    currentX++;
-    path.add(`${currentX},${currentY}`);
-  }
-
-  return path;
-};
-
 function createSeededRandom(seed: number) {
   return function () {
     seed = (seed * 16807) % 2147483647;
@@ -88,7 +71,6 @@ export const generateTunnels = (
   for (let x = startX; x <= endX; x++) {
     newTacticalGridMap[startY][x] = {
       type: BASE_TILES.TUNNEL,
-      depth: 0,
       feature: null,
       revealed: false,
     };
@@ -129,7 +111,7 @@ export const generateTunnels = (
   newTacticalGridMap[endY][endX].feature = FEATURES.END;
 
   //Illuminate the known path forward,
-  let currentX = startX;
+  let currentX = startX - 1;
   while (currentX < endX) {
     currentX++;
     newTacticalGridMap[startY][currentX].revealed = true;

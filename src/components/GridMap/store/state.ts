@@ -1,6 +1,6 @@
 // state.ts
 import { proxy } from "valtio";
-import { GRID_HEIGHT } from "../constants";
+import { BASE_TILES, GRID_HEIGHT } from "../constants";
 
 export type TacticalGridCell = {
   type: BaseCellType;
@@ -10,11 +10,14 @@ export type TacticalGridCell = {
 
 export type TacticalGridMap = TacticalGridCell[][];
 
-interface TacticalMapState {
+export interface TacticalMapState {
   isInitialized: boolean;
   seed: number;
   tacticalGridMap: TacticalGridMap;
   playerPosition: GridPosition;
+  debugSettings: {
+    showCoords: boolean;
+  };
 
   //getters
   debugInfo: {
@@ -31,6 +34,9 @@ export const tacticalMapState = proxy<TacticalMapState>({
     x: 0,
     y: Math.round(GRID_HEIGHT / 2),
   },
+  debugSettings: {
+    showCoords: false,
+  },
 
   get debugInfo() {
     return {
@@ -42,7 +48,7 @@ export const tacticalMapState = proxy<TacticalMapState>({
 
 export const useTacticalMapState = () => tacticalMapState;
 
-export type BaseCellType = "wall" | "tunnel";
+export type BaseCellType = BASE_TILES.WALL | BASE_TILES.FLOOR;
 
 export type FeatureType =
   | "ruin"

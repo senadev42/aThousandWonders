@@ -1,12 +1,17 @@
 // actions.ts
-import { GridPosition, TacticalGridMap, useTacticalMapState } from "./state";
+import {
+  GridPosition,
+  TacticalGridMap,
+  TacticalMapState,
+  useTacticalMapState,
+} from "./state";
 import { generateTunnels } from "../helpers/generateTunnels";
-import { GRID_HEIGHT, GRID_WIDTH } from "../constants";
+import { BASE_TILES, GRID_HEIGHT, GRID_WIDTH } from "../constants";
 
 export const useTravelActions = () => {
   const state = useTacticalMapState();
 
-  const initializeGrid = () => {
+  const initializeGrid = (emptyMap?: boolean) => {
     state.isInitialized = false;
     const startY = Math.floor(GRID_HEIGHT / 2);
     const endY = Math.floor(GRID_HEIGHT / 2);
@@ -18,7 +23,8 @@ export const useTravelActions = () => {
       startY,
       GRID_WIDTH - 1,
       endY,
-      state.seed
+      state.seed,
+      emptyMap
     );
 
     state.isInitialized = true;
@@ -30,12 +36,23 @@ export const useTravelActions = () => {
     state.playerPosition = { x, y };
   };
 
+  const updateDebugSettings = (
+    settings: Partial<TacticalMapState["debugSettings"]>
+  ) => {
+    state.debugSettings = {
+      ...state.debugSettings,
+      ...settings,
+    };
+  };
+
   return {
     initializeGrid,
     movePlayer,
+    updateDebugSettings,
   };
 };
 
+//Utild
 function isInBounds(x: number, y: number): boolean {
   return x >= 0 && x < GRID_WIDTH && y >= 0 && y < GRID_HEIGHT;
 }
@@ -53,7 +70,7 @@ function isValidMove(
   return (
     isInBounds(targetX, targetY) &&
     isAdjacent(targetX, targetY, playerPos) &&
-    map[targetY][targetX].type === "tunnel"
+    map[targetY][targetX].type === BASE_TILES.FLOOR
   );
 }
 
@@ -78,7 +95,7 @@ function revealAreaAround(
   ].filter(([x, y]) => isInBounds(x, y));
 
   adjacentPositions.forEach(([adjX, adjY]) => {
-    if (newMap[adjY][adjX].type === "tunnel") {
+    if (newMap[adjY][adjX].type === BASE_TILES.FLOOR) {
       newMap[adjY][adjX].revealed = true;
     }
   });

@@ -1,10 +1,10 @@
-export const GRID_WIDTH = 19;
-export const GRID_HEIGHT = 15;
+export const GRID_WIDTH = 15;
+export const GRID_HEIGHT = 13;
 
-export const BASE_TILES = {
-  WALL: "wall",
-  TUNNEL: "tunnel",
-} as const;
+export enum BASE_TILES {
+  WALL = "wall",
+  FLOOR = "floor",
+}
 
 export const FEATURES = {
   RUIN: "ruin",
@@ -16,7 +16,7 @@ export const FEATURES = {
 
 export const TILE_VISUALS = {
   [BASE_TILES.WALL]: " ",
-  [BASE_TILES.TUNNEL]: " ",
+  [BASE_TILES.FLOOR]: " ",
   [FEATURES.RUIN]: "🏛️",
   [FEATURES.CRYSTAL]: "💎",
   [FEATURES.DANGER]: "💀",

@@ -1,12 +1,13 @@
 import { useSnapshot } from "valtio";
 import { useTravelStore } from "./store";
 import { GridPosition, TacticalGridCell } from "./store/state";
-import React from "react";
+import React, { useEffect } from "react";
 import { TILE_VISUALS } from "./constants";
+import GridDebugMenu from "./DebugGridMap";
 
 const TravelTunnelGrid = () => {
-  const { movePlayer, state, initializeGrid } = useTravelStore();
-  const { tacticalGridMap, playerPosition, seed, debugInfo } =
+  const { movePlayer, state } = useTravelStore();
+  const { tacticalGridMap, playerPosition, seed, debugSettings } =
     useSnapshot(state);
 
   return (
@@ -37,6 +38,7 @@ const TravelTunnelGrid = () => {
                   isAdjacent={isAdjacent}
                   seed={seed}
                   onMove={() => movePlayer(x, y)}
+                  debugSettings={debugSettings}
                 />
 
                 {/* Player overlay */}
@@ -47,22 +49,7 @@ const TravelTunnelGrid = () => {
         )}
       </div>
 
-      {/* Debug Menu */}
-      <div className="flex flex-col space-y-2  bg-gray-900 p-4 rounded min-w-[15rem] text-black">
-        <button
-          className="mt-4 p-2 bg-gray-800 text-gray-200 rounded hover:bg-gray-700"
-          onClick={initializeGrid}
-        >
-          Reset Grid
-        </button>
-
-        {/* Debug Information */}
-        <div className="text-gray-200 w-full">
-          {/* Cell being hovered over */}
-          <p>Player position: {debugInfo.playerPosition}</p>
-          <p>Seed: {debugInfo.seed}</p>
-        </div>
-      </div>
+      <GridDebugMenu />
     </div>
   );
 };
@@ -74,18 +61,18 @@ type MapCellProps = {
   isAdjacent: boolean;
   seed: number;
   onMove: () => void;
+  debugSettings: {
+    showCoords: boolean;
+  };
 };
 
 const MapCell: React.FC<MapCellProps> = React.memo(
   (props: MapCellProps) => {
-    const { x, y, cell, isAdjacent, onMove } = props;
+    const { x, y, cell, isAdjacent, onMove, debugSettings } = props;
 
     const isWall = cell.type === "wall";
-
     const wallColorClass = "bg-gray-900";
-
     const revealedColorClass = "bg-gray-600";
-
     const hiddenColorClass = "bg-gray-800";
 
     const opacityClass = isWall
@@ -103,7 +90,7 @@ const MapCell: React.FC<MapCellProps> = React.memo(
       `}
         onClick={isAdjacent ? onMove : undefined}
       >
-        {!isWall && (
+        {!isWall && debugSettings.showCoords && (
           <span className="absolute inset-0 flex items-center justify-center z-10 text-[0.6rem] opacity-50">
             {x},{y}
           </span>
@@ -128,7 +115,8 @@ const MapCell: React.FC<MapCellProps> = React.memo(
   (prev, next) =>
     prev.seed === next.seed &&
     prev.cell.revealed === next.cell.revealed &&
-    prev.isAdjacent === next.isAdjacent
+    prev.isAdjacent === next.isAdjacent &&
+    prev.debugSettings.showCoords === next.debugSettings.showCoords
 );
 
 type PlayerLayerProps = {

@@ -41,8 +41,20 @@ export const generateTunnels = (
   startY: number,
   endX: number,
   endY: number,
-  seed: number
+  seed: number,
+  emptyMap: boolean = false
 ): TacticalGridCell[][] => {
+  if (emptyMap) {
+    return Array.from({ length: GRID_HEIGHT }, () =>
+      Array.from({ length: GRID_WIDTH }, () => ({
+        type: BASE_TILES.FLOOR,
+        depth: 0,
+        feature: null,
+        revealed: true,
+      }))
+    );
+  }
+
   const seedRandom = createSeededRandom(seed);
 
   // Initialize grid with walls
@@ -70,7 +82,7 @@ export const generateTunnels = (
   // carve a tunnel between them
   for (let x = startX; x <= endX; x++) {
     newTacticalGridMap[startY][x] = {
-      type: BASE_TILES.TUNNEL,
+      type: BASE_TILES.FLOOR,
       feature: null,
       revealed: false,
     };
@@ -94,9 +106,9 @@ export const generateTunnels = (
       const midY = (currentY + nextY) / 2;
 
       // Create tunnel segments
-      newTacticalGridMap[currentY][currentX].type = BASE_TILES.TUNNEL;
+      newTacticalGridMap[currentY][currentX].type = BASE_TILES.FLOOR;
       newTacticalGridMap[Math.floor(midY)][Math.floor(midX)].type =
-        BASE_TILES.TUNNEL;
+        BASE_TILES.FLOOR;
 
       stack.push([nextX, nextY]);
     } else {

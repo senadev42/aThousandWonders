@@ -1,54 +1,40 @@
-# React + TypeScript + Vite
+# A Thousand Wonders
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+A narrative trading simulator and rpg set in the sun-scorched realm of Khor, where massive serpentine vessels traverse underground tunnels carrying precious cargo and even more precious secrets.
 
-Currently, two official plugins are available:
+### About
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Babel](https://babeljs.io/) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+This game serves as a prequel to a larger story, following the early days of the Royahi Trading Company and their vessel, the Dusk Serpent. Players will manage trade routes, maintain their vessel, deal with various crises, and slowly uncover the mysteries that lie beneath the burning sands.
 
-## Expanding the ESLint configuration
+### Key Features
 
-If you are developing a production application, we recommend updating the configuration to enable type-aware lint rules:
+- **Strategic Trading**: Navigate complex market dynamics across different settlements
+- **Crew Management**: Work with a diverse cast of characters, each bringing unique abilities and storylines
+- **Underground Navigation**: Plot courses through ancient tunnel networks while managing resources
+- **Stellshade Arts**: Master the mysterious substance that makes surviving and traversing the burning sea possible
+- **Dynamic Events**: Encounter various situations that shape your company's future
 
-```js
-export default tseslint.config({
-  extends: [
-    // Remove ...tseslint.configs.recommended and replace with this
-    ...tseslint.configs.recommendedTypeChecked,
-    // Alternatively, use this for stricter rules
-    ...tseslint.configs.strictTypeChecked,
-    // Optionally, add this for stylistic rules
-    ...tseslint.configs.stylisticTypeChecked,
-  ],
-  languageOptions: {
-    // other options...
-    parserOptions: {
-      project: ['./tsconfig.node.json', './tsconfig.app.json'],
-      tsconfigRootDir: import.meta.dirname,
-    },
-  },
-})
-```
+### Technical Details
 
-You can also install [eslint-plugin-react-x](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-x) and [eslint-plugin-react-dom](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-dom) for React-specific lint rules:
+A React-based game built with, so far:
 
-```js
-// eslint.config.js
-import reactX from 'eslint-plugin-react-x'
-import reactDom from 'eslint-plugin-react-dom'
+- Tailwind CSS
+- Valtio for state management
 
-export default tseslint.config({
-  plugins: {
-    // Add the react-x and react-dom plugins
-    'react-x': reactX,
-    'react-dom': reactDom,
-  },
-  rules: {
-    // other rules...
-    // Enable its recommended typescript rules
-    ...reactX.configs['recommended-typescript'].rules,
-    ...reactDom.configs.recommended.rules,
-  },
-})
+### Status
+
+🚧 Active Development
+
+This project is being developed iteratively, with new features and content added regularly. Current focus is on core gameplay systems and initial story content.
+
+Final fate is to ported in Tauri so it can go native.
+
+### Getting Started
+
+```bash
+# Install dependencies
+npm install
+
+# Run development server
+npm run dev
 ```

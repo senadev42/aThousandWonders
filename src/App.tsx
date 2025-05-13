@@ -33,8 +33,8 @@ function Header() {
     <header className="fixed top-0 left-0 right-0 bg-slate-800 text-white p-4 py-2 flex items-center justify-between">
       {/* Title */}
       <div className="flex items-center gap-4">
-        <h1 className="text-2xl font-mono bg-gradient-to-r from-purple-400 to-pink-400 bg-clip-text text-transparent">
-          a thousand wonders
+        <h1 className="text-2xl font-mono bg-gradient-to-r from-purple-400 to-pink-400 bg-clip-text text-transparent flex items-start">
+          a thousand wonders <span className="text-xs">pre-pre-pre alpha </span>
         </h1>
       </div>
 

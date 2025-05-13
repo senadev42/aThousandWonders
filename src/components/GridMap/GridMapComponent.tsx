@@ -3,54 +3,35 @@ import { useSnapshot } from "valtio";
 import { useTravelStore } from "./store";
 import { isAdjacent } from "./store/actions";
 import { GridPosition, BaseCell } from "./store/state";
-import React, { useCallback, useEffect, useRef, useState } from "react";
+import React, { useRef } from "react";
 import GridDebugMenu from "./GridDebugMenu";
+import { useGridScroll } from "./helpers/useGridScroll";
 
 const CELL_SIZE = 36;
 
 const GridMapComponent = () => {
   const { movePlayer, state } = useTravelStore();
   const { currentScene, playerPosition, debugSettings } = useSnapshot(state);
-  const scrollRef = useRef<HTMLDivElement>(null);
 
-  // Track visible area
-  const [visibleRange, setVisibleRange] = useState({
+  const scrollRef = useRef<HTMLDivElement | null>(null);
+
+  const visibleRange = useGridScroll(
+    scrollRef,
+    playerPosition,
+    currentScene.width,
+    currentScene.height
+  )?.visibleRange ?? {
     startX: 0,
-    endX: 15,
+    endX: 0,
     startY: 0,
-    endY: 13,
-  });
-
-  // Update visible range on scroll
-  const handleScroll = useCallback(() => {
-    if (!scrollRef.current) return;
-
-    const element = scrollRef.current;
-    const scrollLeft = element.scrollLeft;
-    const scrollTop = element.scrollTop;
-
-    const startX = Math.max(0, Math.floor(scrollLeft / CELL_SIZE) - 1);
-    const startY = Math.max(0, Math.floor(scrollTop / CELL_SIZE) - 1);
-    const endX = Math.min(startX + 18, currentScene.width);
-    const endY = Math.min(startY + 16, currentScene.height);
-
-    setVisibleRange({ startX, endX, startY, endY });
-  }, [currentScene.width, currentScene.height]);
-
-  // attach event listener
-  useEffect(() => {
-    const element = scrollRef.current;
-    if (!element) return;
-
-    element.addEventListener("scroll", handleScroll);
-    return () => element.removeEventListener("scroll", handleScroll);
-  }, [handleScroll]);
+    endY: 0,
+  };
 
   return (
     <div className="flex flex-col gap-2">
       <div
         ref={scrollRef}
-        className="border-4 border-black rounded bg-black w-[548px] h-[478px] overflow-auto flex"
+        className="w-[548px] h-[478px] border-4 border-black rounded bg-gray-900 overflow-auto flex scrollbar-none"
       >
         <div className="relative inline-block">
           <div
@@ -136,6 +117,7 @@ const MapCell: React.FC<MapCellProps> = React.memo(
     const { x, y, cell, isAdjacent, onMove, debugSettings } = props;
 
     const isWall = cell.type === "wall";
+
     const wallColorClass = "bg-gray-900";
     const revealedColorClass = "bg-gray-600";
     const hiddenColorClass = "bg-gray-800";
@@ -146,11 +128,6 @@ const MapCell: React.FC<MapCellProps> = React.memo(
       ? revealedColorClass
       : hiddenColorClass;
 
-    function handleClick() {
-      console.log("Clicked cell", x, y);
-      onMove();
-    }
-
     return (
       <div
         className={`w-full h-full flex items-center justify-center 
@@ -158,7 +135,7 @@ const MapCell: React.FC<MapCellProps> = React.memo(
           ${isAdjacent ? "cursor-pointer hover:brightness-125" : ""}
           ${opacityClass}
         `}
-        onClick={isAdjacent ? handleClick : undefined}
+        onClick={isAdjacent ? onMove : undefined}
       >
         {!isWall && debugSettings.showCoords && (
           <span className="absolute inset-0 flex items-center justify-center z-10 text-[0.6rem] opacity-50">

@@ -9,15 +9,17 @@ import {
 } from "./state";
 import { generateTunnels } from "../helpers/generateTunnels";
 import { BaseTiles, GRID_HEIGHT, GRID_WIDTH } from "./state";
-import { getSceneById } from "../scenes/sceneProcessor";
+import { getSceneById, padSceneToViewport } from "../scenes/sceneProcessor";
 
 export const useTravelActions = () => {
   const state = useGridMapState();
 
+  /**
+   * Accepts a sceneParams object and initializes the scene based on the type.
+   * @param sceneParams
+   */
   const initializeScene = (sceneParams: SceneParams) => {
     state.isInitialized = false;
-
-    let newScene: BaseScene;
 
     switch (sceneParams.sceneType) {
       case SceneType.RANDOM:
@@ -27,7 +29,7 @@ export const useTravelActions = () => {
         const startY = Math.floor(GRID_HEIGHT / 2);
         const endY = Math.floor(GRID_HEIGHT + GRID_HEIGHT);
 
-        newScene = generateTunnels(
+        const newRandomScene: BaseScene = generateTunnels(
           0,
           startY,
           GRID_WIDTH - 1,
@@ -38,7 +40,7 @@ export const useTravelActions = () => {
         state.currentScene = {
           sceneType: SceneType.RANDOM,
           seed: sceneParams.seed,
-          data: newScene,
+          data: newRandomScene,
           width: GRID_WIDTH,
           height: GRID_HEIGHT,
         };
@@ -46,7 +48,7 @@ export const useTravelActions = () => {
         break;
 
       case SceneType.EMPTY:
-        newScene = Array.from({ length: GRID_HEIGHT }, () =>
+        const newEmptyScene = Array.from({ length: GRID_HEIGHT }, () =>
           Array.from({ length: GRID_WIDTH }, () => ({
             type: BaseTiles.FLOOR,
             revealed: true,
@@ -55,7 +57,7 @@ export const useTravelActions = () => {
 
         state.currentScene = {
           sceneType: SceneType.EMPTY,
-          data: newScene,
+          data: newEmptyScene,
           width: GRID_WIDTH,
           height: GRID_HEIGHT,
         };
@@ -67,15 +69,22 @@ export const useTravelActions = () => {
 
         console.log("loading premade scene with id", sceneParams.sceneId);
 
-        const scene = getSceneById(sceneParams.sceneId);
-        if (!scene) throw new Error(`Scene ${sceneParams.sceneId} not found`);
+        let newLoadedScene = getSceneById(sceneParams.sceneId);
+        if (!newLoadedScene)
+          throw new Error(`Scene ${sceneParams.sceneId} not found`);
+
+        newLoadedScene = padSceneToViewport(
+          newLoadedScene,
+          GRID_WIDTH,
+          GRID_HEIGHT
+        );
 
         state.currentScene = {
           sceneType: SceneType.PREMADE,
           sceneId: sceneParams.sceneId,
-          data: scene.data,
-          width: scene.width,
-          height: scene.height,
+          data: newLoadedScene.data,
+          width: newLoadedScene.width,
+          height: newLoadedScene.height,
         };
         break;
       }
@@ -87,13 +96,16 @@ export const useTravelActions = () => {
     state.isInitialized = true;
   };
 
+  /**
+   * Moves the player to a new position if the move is valid.
+   * @param x
+   * @param y
+   * @returns
+   */
   const movePlayer = (x: number, y: number): void => {
-    console.log("command?");
-
     if (!isValidMove(x, y, state.playerPosition, state.currentScene.data))
       return;
 
-    console.log("Moving player to", x, y);
     state.currentScene.data = revealAreaAround(x, y, state.currentScene.data);
     state.playerPosition = { x, y };
   };

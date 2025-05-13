@@ -6,7 +6,7 @@ export interface RawScene {
   id: string;
   name: string;
   layout: string[];
-  features: Record<string, string>;
+  features?: Record<string, string>;
 }
 
 const processScene = (scene: RawScene): Scene => {
@@ -20,8 +20,15 @@ const processScene = (scene: RawScene): Scene => {
   for (let y = 0; y < height; y++) {
     const row: BaseCell[] = [];
     for (let x = 0; x < width; x++) {
+      const type =
+        scene.layout[y][x] === "X"
+          ? BaseTiles.WALL
+          : scene.layout[y][x] === "O"
+          ? BaseTiles.FLOOR
+          : BaseTiles.WALL;
+
       row.push({
-        type: scene.layout[y][x] === "X" ? BaseTiles.WALL : BaseTiles.FLOOR,
+        type,
         revealed: true,
         feature: undefined,
       });
@@ -30,12 +37,14 @@ const processScene = (scene: RawScene): Scene => {
   }
 
   // Second pass: Add features
-  Object.entries(scene.features).forEach(([coord, featureType]) => {
-    const [x, y] = coord.split(",").map(Number);
-    if (processedData[y]?.[x]) {
-      processedData[y][x].feature = featureType;
-    }
-  });
+  if (scene.features) {
+    Object.entries(scene.features).forEach(([coord, featureType]) => {
+      const [x, y] = coord.split(",").map(Number);
+      if (processedData[y]?.[x]) {
+        processedData[y][x].feature = featureType;
+      }
+    });
+  }
 
   return {
     sceneType: SceneType.PREMADE,
@@ -44,6 +53,48 @@ const processScene = (scene: RawScene): Scene => {
     width,
     height,
     data: processedData,
+  };
+};
+
+export const padSceneToViewport = (
+  scene: Scene,
+  viewportWidth: number,
+  viewportHeight: number
+): Scene => {
+  if (scene.width >= viewportWidth && scene.height >= viewportHeight) {
+    return scene;
+  }
+
+  const paddedWidth = Math.max(scene.width, viewportWidth);
+  const paddedHeight = Math.max(scene.height, viewportHeight);
+
+  // Calculate padding for centering
+  const xOffset = Math.floor((paddedWidth - scene.width) / 2);
+  const yOffset = Math.floor((paddedHeight - scene.height) / 2);
+
+  // Create new padded data array filled with walls
+  const paddedData: BaseCell[][] = Array.from(
+    { length: paddedHeight - 1 },
+    () =>
+      Array.from({ length: paddedWidth - 1 }, () => ({
+        type: BaseTiles.WALL,
+        revealed: true,
+        feature: undefined,
+      }))
+  );
+
+  // Copy original scene data to center of padded array
+  for (let y = 0; y < scene.height; y++) {
+    for (let x = 0; x < scene.width; x++) {
+      paddedData[y + yOffset][x + xOffset] = scene.data[y][x];
+    }
+  }
+
+  return {
+    ...scene,
+    width: paddedWidth,
+    height: paddedHeight,
+    data: paddedData,
   };
 };
 

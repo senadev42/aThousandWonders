@@ -1,28 +1,21 @@
 {
     "id": "tavern_1",
-    "name": "The Rusty Serpent Tavern",
+    "name": "Test Scene 1",
     "layout": [
-        "XXXXXXXXXXXXXXXXXXXXXXXXX",
-        "XOOOOOOXOOOOOXOOOOOOOOX",
-        "XOOOOOOXOOOOOXOOOOOOOOX",
-        "XOOOOOXXXOOOOXXXOOOOOOX",
-        "XOOOOOOXOOOOOXOOOOOOOOX",
-        "XXXOOOOOXXXXXOXOOOXXXXX",
-        "XOOOOOOOOOOOOOXOOOOOOOX",
-        "XOOOOOOOOOOOOOXOOOOOOOX",
-        "XXXXOOOOOOOOOXXXOOOOOOX",
-        "XOOOOOXXXOOOOXOOOOOOOOX",
-        "XOOOOOOXOOOOOXOOOOOOOOX",
-        "XOOOOOOXOOOOOXXXXXOOOOX",
-        "XOOXXXXXXXXXXXOOOOOOOOX",
-        "XOOOOOOOOOOOOXXXOOXXXXX"
-    ],
-    "features": {
-        "3,2": "table",
-        "6,2": "table",
-        "3,3": "chair",
-        "6,3": "chair",
-        "3,5": "barrel",
-        "6,5": "barrel"
-    }
+        "XXXXXXXXXXXXXXXXXXXX",
+        "XOOOOOOOOOOOOOOOOOOX",
+        "XOOOOOOOOOOOOOOOOOOX",
+        "XOOOOOOOOOOOOOOOOOOX",
+        "XOOOOOOOOOOOOOOOOOOX",
+        "XOOOOOOOOOOOOOOOOOOX",
+        "XOOOOOOOOOOOOOOOOOOX",
+        "XOOOOOOOOOOOOOOOOOOX",
+        "XOOOOOOOOOOOOOOOOOOX",
+        "XXXOXXXXOXXXXOOXXXXX",
+        "XXXOXXXXOXXXXOOXXXXX",
+        "XOOOOOOOOOOOOOOOOOOX",
+        "XOOOXXXXOXXXXOOOOOOX",
+        "XOOOXXXXOXXXXOOOOOOX",
+        "XXXXXXXXXXXXXXXXXXXX"
+    ]
 }

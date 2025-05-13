@@ -5,14 +5,13 @@ export const GRID_WIDTH = 15;
 export const GRID_HEIGHT = 13;
 
 //Base Scene Types
-export enum BASE_TILES {
+export enum BaseTiles {
   WALL = "wall",
   FLOOR = "floor",
 }
-export type BaseCellType = BASE_TILES.WALL | BASE_TILES.FLOOR;
 
 export type BaseCell = {
-  type: BaseCellType;
+  type: BaseTiles;
   revealed: boolean;
 };
 
@@ -23,12 +22,29 @@ export type GridPosition = {
   y: number;
 };
 
-//Scene Data -
+//Scene Types
+export enum SceneType {
+  RANDOM = "random",
+  EMPTY = "empty",
+  PREMADE = "premade",
+}
+
+export type SceneParams = {
+  sceneType: SceneType;
+  seed?: number;
+  sceneId?: string;
+};
+
+export type Scene = SceneParams & {
+  data: BaseScene;
+};
 
 export interface GridMapState {
   isInitialized: boolean;
   seed: number;
-  currentScene: BaseScene;
+
+  currentScene: Scene;
+
   playerPosition: GridPosition;
   debugSettings: {
     showCoords: boolean;
@@ -44,7 +60,15 @@ export interface GridMapState {
 export const gridMapState = proxy<GridMapState>({
   isInitialized: false,
   seed: 0,
-  currentScene: [],
+  currentScene: {
+    sceneType: SceneType.EMPTY,
+    data: Array.from({ length: GRID_HEIGHT }, () =>
+      Array.from({ length: GRID_WIDTH }, () => ({
+        type: BaseTiles.FLOOR,
+        revealed: true,
+      }))
+    ),
+  },
   playerPosition: {
     x: 0,
     y: Math.round(GRID_HEIGHT / 2),

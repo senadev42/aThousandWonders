@@ -4,35 +4,61 @@ import {
   BaseScene,
   GridMapState,
   useGridMapState,
+  SceneParams,
+  SceneType,
 } from "./state";
 import { generateTunnels } from "../helpers/generateTunnels";
-import { BASE_TILES, GRID_HEIGHT, GRID_WIDTH } from "./state";
+import { BaseTiles, GRID_HEIGHT, GRID_WIDTH } from "./state";
 
 export const useTravelActions = () => {
   const state = useGridMapState();
 
-  const initializeGrid = (emptyMap?: boolean) => {
+  const initializeScene = (sceneParams: SceneParams) => {
     state.isInitialized = false;
+
     const startY = Math.floor(GRID_HEIGHT / 2);
     const endY = Math.floor(GRID_HEIGHT / 2);
 
     state.seed = Math.floor(Math.random() * 10000);
 
-    state.currentScene = generateTunnels(
-      0,
-      startY,
-      GRID_WIDTH - 1,
-      endY,
-      state.seed,
-      emptyMap
-    );
+    let newScene: BaseScene;
+
+    switch (sceneParams.sceneType) {
+      case SceneType.RANDOM:
+        newScene = generateTunnels(0, startY, GRID_WIDTH - 1, endY, state.seed);
+        break;
+
+      case SceneType.EMPTY:
+        newScene = generateTunnels(
+          0,
+          startY,
+          GRID_WIDTH - 1,
+          endY,
+          state.seed,
+          true
+        );
+        break;
+
+      case SceneType.PREMADE:
+        if (!sceneParams.sceneId)
+          throw new Error("Scene ID required for premade scenes");
+        newScene = generateTunnels(0, startY, GRID_WIDTH - 1, endY, state.seed); // Add this line
+        break;
+
+      default:
+        throw new Error(`Unknown scene type: ${sceneParams.sceneType}`);
+    }
+
+    state.currentScene.data = newScene;
+    state.currentScene.sceneType = sceneParams.sceneType;
 
     state.isInitialized = true;
   };
 
   const movePlayer = (x: number, y: number): void => {
-    if (!isValidMove(x, y, state.playerPosition, state.currentScene)) return;
-    state.currentScene = revealAreaAround(x, y, state.currentScene);
+    if (!isValidMove(x, y, state.playerPosition, state.currentScene.data))
+      return;
+    state.currentScene.data = revealAreaAround(x, y, state.currentScene.data);
     state.playerPosition = { x, y };
   };
 
@@ -46,7 +72,7 @@ export const useTravelActions = () => {
   };
 
   return {
-    initializeGrid,
+    initializeScene,
     movePlayer,
     updateDebugSettings,
   };
@@ -76,19 +102,13 @@ function isValidMove(
   return (
     isInBounds(targetX, targetY) &&
     isAdjacent(targetX, targetY, playerPos) &&
-    map[targetY][targetX].type === BASE_TILES.FLOOR
+    map[targetY][targetX].type === BaseTiles.FLOOR
   );
 }
 
-function revealAreaAround(
-  x: number,
-  y: number,
-  currentScene: BaseScene
-): BaseScene {
+function revealAreaAround(x: number, y: number, data: BaseScene): BaseScene {
   // Create new map copy
-  const newMap = currentScene.map((row) =>
-    [...row].map((cell) => ({ ...cell }))
-  );
+  const newMap = data.map((row) => [...row].map((cell) => ({ ...cell })));
 
   // Reveal center and adjacent cells
   newMap[y][x].revealed = true;
@@ -101,7 +121,7 @@ function revealAreaAround(
   ].filter(([x, y]) => isInBounds(x, y));
 
   adjacentPositions.forEach(([adjX, adjY]) => {
-    if (newMap[adjY][adjX].type === BASE_TILES.FLOOR) {
+    if (newMap[adjY][adjX].type === BaseTiles.FLOOR) {
       newMap[adjY][adjX].revealed = true;
     }
   });

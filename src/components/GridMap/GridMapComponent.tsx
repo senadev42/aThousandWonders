@@ -12,15 +12,15 @@ const GridMapComponent = () => {
     useSnapshot(state);
 
   return (
-    <div className="flex flex-col md:flex-row gap-2">
+    <div className="flex flex-col  gap-2">
       <div
         className="grid rounded overflow-auto border-4 border-black"
         style={{
-          gridTemplateColumns: `repeat(${currentScene[0].length}, minmax(36px, 1fr))`, // w-9 = 36px
+          gridTemplateColumns: `repeat(${currentScene.data[0].length}, minmax(36px, 1fr))`, // w-9 = 36px
           gridAutoRows: "36px", // Match height
         }}
       >
-        {currentScene.map((row, y) =>
+        {currentScene.data.map((row, y) =>
           row.map((cell, x) => {
             const isCellAdjacent = isAdjacent(
               x,

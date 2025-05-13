@@ -2,14 +2,15 @@ import { useEffect } from "react";
 import { useSnapshot } from "valtio";
 import { useTravelStore } from "./store";
 import GridMapComponent from "./GridMapComponent";
+import { SceneType } from "./store/state";
 
 const TraversalInterface = () => {
-  const { state, initializeGrid } = useTravelStore();
+  const { state, initializeScene } = useTravelStore();
   const { isInitialized } = useSnapshot(state);
 
   useEffect(() => {
     if (!isInitialized) {
-      initializeGrid();
+      initializeScene({ sceneType: SceneType.EMPTY });
     }
   }, []);
 

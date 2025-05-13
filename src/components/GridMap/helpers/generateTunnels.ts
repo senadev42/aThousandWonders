@@ -1,4 +1,4 @@
-import { BASE_TILES, GRID_HEIGHT, GRID_WIDTH } from "../store/state";
+import { BaseTiles, GRID_HEIGHT, GRID_WIDTH } from "../store/state";
 import { BaseCell } from "../store/state";
 
 const getNeighbors = (x: number, y: number): number[][] => {
@@ -46,7 +46,7 @@ export const generateTunnels = (
   if (emptyMap) {
     return Array.from({ length: GRID_HEIGHT }, () =>
       Array.from({ length: GRID_WIDTH }, () => ({
-        type: BASE_TILES.FLOOR,
+        type: BaseTiles.FLOOR,
         revealed: true,
       }))
     );
@@ -57,7 +57,7 @@ export const generateTunnels = (
   // Initialize grid with walls
   let newBaseScene: BaseCell[][] = Array.from({ length: GRID_HEIGHT }, () =>
     Array.from({ length: GRID_WIDTH }, () => ({
-      type: BASE_TILES.WALL,
+      type: BaseTiles.WALL,
       revealed: false,
     }))
   );
@@ -75,7 +75,7 @@ export const generateTunnels = (
   // carve a tunnel between them
   for (let x = startX; x <= endX; x++) {
     newBaseScene[startY][x] = {
-      type: BASE_TILES.FLOOR,
+      type: BaseTiles.FLOOR,
       revealed: false,
     };
   }
@@ -98,8 +98,8 @@ export const generateTunnels = (
       const midY = (currentY + nextY) / 2;
 
       // Create tunnel segments
-      newBaseScene[currentY][currentX].type = BASE_TILES.FLOOR;
-      newBaseScene[Math.floor(midY)][Math.floor(midX)].type = BASE_TILES.FLOOR;
+      newBaseScene[currentY][currentX].type = BaseTiles.FLOOR;
+      newBaseScene[Math.floor(midY)][Math.floor(midX)].type = BaseTiles.FLOOR;
 
       stack.push([nextX, nextY]);
     } else {

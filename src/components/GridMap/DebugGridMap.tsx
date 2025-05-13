@@ -1,65 +1,49 @@
-import { useState } from "react";
 import { useSnapshot } from "valtio";
 import { useTravelStore } from "./store";
-
-type RegenCondition = {
-  emptyMap: boolean;
-};
+import { SceneType } from "./store/state";
 
 const GridDebugMenu = () => {
-  const { state, initializeGrid, updateDebugSettings } = useTravelStore();
+  const { state, initializeScene, updateDebugSettings } = useTravelStore();
   const { debugInfo } = useSnapshot(state);
 
-  const [regenCondition, setRegenCondition] = useState<RegenCondition>({
-    emptyMap: false,
-  });
-
   return (
-    <div className="flex flex-col  bg-gray-900 p-4 rounded min-w-[15rem] text-white">
+    <div className="flex justify-between items-start bg-gray-900 p-4 rounded text-white text-xs">
       {/* Debug Information */}
-      <div className="text-gray-200 w-full">
+      <div className="text-gray-200  space-x-2 ">
         {/* Cell being hovered over */}
-        <p>Player position: {debugInfo.playerPosition}</p>
+        <p>{debugInfo.playerPosition}</p>
         <p>Seed: {debugInfo.seed}</p>
-      </div>
 
-      <div className="mt-4 flex items-center ">
-        <input
-          type="checkbox"
-          className="mr-2 size-5 "
-          onChange={(e) => {
-            updateDebugSettings({
-              showCoords: e.target.checked,
-            });
-          }}
-        />
-        <span>Show Coords in Cells</span>
-      </div>
-
-      {/* Regen section */}
-      <div className="mt-10 border-slate-400 rounded-md space-y-2">
-        {/* Checkbox to generate empty map */}
-        <div className="flex items-center ">
+        <div className="mt-2 flex items-center  ">
           <input
             type="checkbox"
-            className="mr-2 size-5 "
+            className="mr-2 size-3"
             onChange={(e) => {
-              setRegenCondition({
-                ...regenCondition,
-                emptyMap: e.target.checked,
+              updateDebugSettings({
+                showCoords: e.target.checked,
               });
             }}
           />
-          <span>Generate Empty Map</span>
+          <span>Show Coords in Cells</span>
         </div>
+      </div>
 
-        {/* Button to re-generate grid */}
-        <button
-          className="p-1 bg-gray-800 text-gray-200 rounded hover:bg-gray-700 w-full"
-          onClick={() => initializeGrid(regenCondition.emptyMap)}
+      {/* Regen section */}
+      <div className="border-slate-400 rounded-md ">
+        {/* Drop down with 3 options, empty map, random map, and a scene */}
+        <select
+          className="bg-gray-800 text-gray-200 p-1 rounded"
+          onChange={(e) => {
+            const selectedScene = e.target.value as SceneType;
+            initializeScene({
+              sceneType: selectedScene,
+            });
+          }}
         >
-          Re-generate Grid
-        </button>
+          <option value={SceneType.EMPTY}>Empty Map</option>
+          <option value={SceneType.RANDOM}>Random Map</option>
+          <option value={SceneType.PREMADE}>Premade Map</option>
+        </select>
       </div>
     </div>
   );

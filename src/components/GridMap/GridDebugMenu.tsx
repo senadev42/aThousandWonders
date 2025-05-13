@@ -1,13 +1,12 @@
 import { useSnapshot } from "valtio";
 import { useTravelStore } from "./store";
-import { Scene, SceneParams, SceneType } from "./store/state";
+import { SceneParams, SceneType } from "./store/state";
 import { useState } from "react";
+import { availableScenes } from "./scenes/sceneProcessor";
 
 const GridDebugMenu = () => {
   const { state, initializeScene, updateDebugSettings } = useTravelStore();
   const { debugInfo } = useSnapshot(state);
-
-  const [seed, setSeed] = useState<number>(debugInfo.seed);
 
   return (
     <div className="flex justify-between items-start bg-gray-900 p-4 rounded text-white text-xs h-[6rem]">
@@ -114,14 +113,18 @@ const SceneSelector = ({
 
       {selectedType === SceneType.PREMADE && (
         <div className="flex gap-2">
-          <input
-            type="text"
-            placeholder="Scene ID"
+          <select
             className="bg-gray-800 text-gray-200 p-1 text-xs rounded flex-1"
             value={sceneId}
             onChange={(e) => setSceneId(e.target.value)}
-            required
-          />
+          >
+            <option value="">Select a scene...</option>
+            {Object.entries(availableScenes).map(([id, scene]) => (
+              <option key={id} value={id}>
+                {scene.name}
+              </option>
+            ))}
+          </select>
         </div>
       )}
     </div>

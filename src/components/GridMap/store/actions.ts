@@ -9,6 +9,7 @@ import {
 } from "./state";
 import { generateTunnels } from "../helpers/generateTunnels";
 import { BaseTiles, GRID_HEIGHT, GRID_WIDTH } from "./state";
+import { getSceneById } from "../scenes/sceneProcessor";
 
 export const useTravelActions = () => {
   const state = useGridMapState();
@@ -16,17 +17,15 @@ export const useTravelActions = () => {
   const initializeScene = (sceneParams: SceneParams) => {
     state.isInitialized = false;
 
-    const startY = Math.floor(GRID_HEIGHT / 2);
-    const endY = Math.floor(GRID_HEIGHT / 2);
-
     let newScene: BaseScene;
 
     switch (sceneParams.sceneType) {
       case SceneType.RANDOM:
-        console.log("generating random map with seed", sceneParams.seed);
-
         if (!sceneParams.seed)
           throw new Error("Seed is required for random scene generation");
+
+        const startY = Math.floor(GRID_HEIGHT / 2);
+        const endY = Math.floor(GRID_HEIGHT + GRID_HEIGHT);
 
         newScene = generateTunnels(
           0,
@@ -40,6 +39,8 @@ export const useTravelActions = () => {
           sceneType: SceneType.RANDOM,
           seed: sceneParams.seed,
           data: newScene,
+          width: GRID_WIDTH,
+          height: GRID_HEIGHT,
         };
 
         break;
@@ -55,15 +56,29 @@ export const useTravelActions = () => {
         state.currentScene = {
           sceneType: SceneType.EMPTY,
           data: newScene,
+          width: GRID_WIDTH,
+          height: GRID_HEIGHT,
         };
 
         break;
 
-      case SceneType.PREMADE:
-        console.log("Loading premade scene:", sceneParams.sceneId);
-        throw new Error("Not implemented yet");
+      case SceneType.PREMADE: {
+        if (!sceneParams.sceneId) throw new Error("Scene ID required");
 
+        console.log("loading premade scene with id", sceneParams.sceneId);
+
+        const scene = getSceneById(sceneParams.sceneId);
+        if (!scene) throw new Error(`Scene ${sceneParams.sceneId} not found`);
+
+        state.currentScene = {
+          sceneType: SceneType.PREMADE,
+          sceneId: sceneParams.sceneId,
+          data: scene.data,
+          width: scene.width,
+          height: scene.height,
+        };
         break;
+      }
 
       default:
         throw new Error(`Unknown scene type`);
@@ -73,8 +88,12 @@ export const useTravelActions = () => {
   };
 
   const movePlayer = (x: number, y: number): void => {
+    console.log("command?");
+
     if (!isValidMove(x, y, state.playerPosition, state.currentScene.data))
       return;
+
+    console.log("Moving player to", x, y);
     state.currentScene.data = revealAreaAround(x, y, state.currentScene.data);
     state.playerPosition = { x, y };
   };
@@ -117,7 +136,6 @@ function isValidMove(
   map: BaseScene
 ): boolean {
   return (
-    isInBounds(targetX, targetY) &&
     isAdjacent(targetX, targetY, playerPos) &&
     map[targetY][targetX].type === BaseTiles.FLOOR
   );

@@ -13,6 +13,7 @@ export enum BaseTiles {
 export type BaseCell = {
   type: BaseTiles;
   revealed: boolean;
+  feature?: string; // Add this
 };
 
 export type BaseScene = BaseCell[][];
@@ -37,6 +38,9 @@ export type SceneParams = {
 
 export type Scene = SceneParams & {
   data: BaseScene;
+  width: number;
+  height: number;
+  name?: string;
 };
 
 export interface GridMapState {
@@ -65,6 +69,8 @@ export const gridMapState = proxy<GridMapState>({
         revealed: true,
       }))
     ),
+    width: GRID_WIDTH,
+    height: GRID_HEIGHT,
   },
   playerPosition: {
     x: 0,

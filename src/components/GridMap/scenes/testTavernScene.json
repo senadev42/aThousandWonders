@@ -1,0 +1,28 @@
+{
+    "id": "tavern_1",
+    "name": "The Rusty Serpent Tavern",
+    "layout": [
+        "XXXXXXXXXXXXXXXXXXXXXXXXX",
+        "XOOOOOOXOOOOOXOOOOOOOOX",
+        "XOOOOOOXOOOOOXOOOOOOOOX",
+        "XOOOOOXXXOOOOXXXOOOOOOX",
+        "XOOOOOOXOOOOOXOOOOOOOOX",
+        "XXXOOOOOXXXXXOXOOOXXXXX",
+        "XOOOOOOOOOOOOOXOOOOOOOX",
+        "XOOOOOOOOOOOOOXOOOOOOOX",
+        "XXXXOOOOOOOOOXXXOOOOOOX",
+        "XOOOOOXXXOOOOXOOOOOOOOX",
+        "XOOOOOOXOOOOOXOOOOOOOOX",
+        "XOOOOOOXOOOOOXXXXXOOOOX",
+        "XOOXXXXXXXXXXXOOOOOOOOX",
+        "XOOOOOOOOOOOOXXXOOXXXXX"
+    ],
+    "features": {
+        "3,2": "table",
+        "6,2": "table",
+        "3,3": "chair",
+        "6,3": "chair",
+        "3,5": "barrel",
+        "6,5": "barrel"
+    }
+}

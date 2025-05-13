@@ -2,20 +2,18 @@
     "id": "tavern_1",
     "name": "Test Scene 1",
     "layout": [
-        "XXXXXXXXXXXXXXXXXXXX",
-        "XOOOOOOOOOOOOOOOOOOX",
-        "XOOOOOOOOOOOOOOOOOOX",
-        "XOOOOOOOOOOOOOOOOOOX",
-        "XOOOOOOOOOOOOOOOOOOX",
-        "XOOOOOOOOOOOOOOOOOOX",
-        "XOOOOOOOOOOOOOOOOOOX",
-        "XOOOOOOOOOOOOOOOOOOX",
-        "XOOOOOOOOOOOOOOOOOOX",
-        "XXXOXXXXOXXXXOOXXXXX",
-        "XXXOXXXXOXXXXOOXXXXX",
-        "XOOOOOOOOOOOOOOOOOOX",
-        "XOOOXXXXOXXXXOOOOOOX",
-        "XOOOXXXXOXXXXOOOOOOX",
-        "XXXXXXXXXXXXXXXXXXXX"
+        "X X X X X X X X X X X X X X X",
+        "X O O O O O X O O O O O O O X",
+        "X O O O O O X O O O O O O O X",
+        "X O O O O O X X X X X X X X X",
+        "X O O O O O X O O O O O O O X",
+        "X O O O O O X O O O O O O O X",
+        "X X X X X X X O O O O O O O X",
+        "X O X O O O O O O O O O O O X",
+        "X O X O O O O O O O O O O O X",
+        "X O X O O O O O O O O O O O X",
+        "X O X O O O O O O O O O O O X",
+        "X O X O O O O O O O O O O O X",
+        "X X X X X X X X X X X X X X X"
     ]
 }

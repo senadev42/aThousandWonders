@@ -20,12 +20,10 @@ const processScene = (scene: RawScene): Scene => {
   for (let y = 0; y < height; y++) {
     const row: BaseCell[] = [];
     for (let x = 0; x < width; x++) {
+      if (scene.layout[y][x] === " ") continue;
+
       const type =
-        scene.layout[y][x] === "X"
-          ? BaseTiles.WALL
-          : scene.layout[y][x] === "O"
-          ? BaseTiles.FLOOR
-          : BaseTiles.WALL;
+        scene.layout[y][x] === "X" ? BaseTiles.WALL : BaseTiles.FLOOR;
 
       row.push({
         type,

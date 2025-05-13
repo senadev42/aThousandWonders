@@ -2,10 +2,11 @@
 import { useSnapshot } from "valtio";
 import { useTravelStore } from "./store";
 import { isAdjacent } from "./store/actions";
-import { GridPosition, BaseCell } from "./store/state";
+import { GridPosition, BaseCell, Scene } from "./store/state";
 import React, { useRef } from "react";
 import GridDebugMenu from "./GridDebugMenu";
 import { useGridScroll } from "./helpers/useGridScroll";
+import { useKeyboardControls } from "./helpers/useKeyboardControls";
 
 const CELL_SIZE = 36;
 
@@ -26,6 +27,8 @@ const GridMapComponent = () => {
     startY: 0,
     endY: 0,
   };
+
+  useKeyboardControls(playerPosition, currentScene as Scene, movePlayer);
 
   return (
     <div className="flex flex-col gap-2">

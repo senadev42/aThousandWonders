@@ -1,13 +1,14 @@
+//GridMapComponent.tsx
 import { useSnapshot } from "valtio";
 import { useTravelStore } from "./store";
-import { GridPosition, TacticalGridCell } from "./store/state";
-import React, { useEffect } from "react";
-import { TILE_VISUALS } from "./constants";
+import { isAdjacent } from "./store/actions";
+import { GridPosition, BaseCell } from "./store/state";
+import React from "react";
 import GridDebugMenu from "./DebugGridMap";
 
-const TravelTunnelGrid = () => {
+const GridMapComponent = () => {
   const { movePlayer, state } = useTravelStore();
-  const { tacticalGridMap, playerPosition, seed, debugSettings } =
+  const { currentScene, playerPosition, seed, debugSettings } =
     useSnapshot(state);
 
   return (
@@ -15,18 +16,18 @@ const TravelTunnelGrid = () => {
       <div
         className="grid rounded overflow-auto border-4 border-black"
         style={{
-          gridTemplateColumns: `repeat(${tacticalGridMap[0].length}, minmax(36px, 1fr))`, // w-9 = 36px
+          gridTemplateColumns: `repeat(${currentScene[0].length}, minmax(36px, 1fr))`, // w-9 = 36px
           gridAutoRows: "36px", // Match height
         }}
       >
-        {tacticalGridMap.map((row, y) =>
+        {currentScene.map((row, y) =>
           row.map((cell, x) => {
-            const isAdjacent =
-              cell.type !== "wall" &&
-              cell.revealed &&
-              Math.abs(x - playerPosition.x) +
-                Math.abs(y - playerPosition.y) ===
-                1;
+            const isCellAdjacent = isAdjacent(
+              x,
+              y,
+              playerPosition,
+              cell.type === "wall" ? true : false
+            );
 
             return (
               <div key={`${x}-${y}`} className="relative">
@@ -35,7 +36,7 @@ const TravelTunnelGrid = () => {
                   x={x}
                   y={y}
                   cell={cell}
-                  isAdjacent={isAdjacent}
+                  isAdjacent={isCellAdjacent}
                   seed={seed}
                   onMove={() => movePlayer(x, y)}
                   debugSettings={debugSettings}
@@ -57,7 +58,7 @@ const TravelTunnelGrid = () => {
 type MapCellProps = {
   x: number;
   y: number;
-  cell: TacticalGridCell;
+  cell: BaseCell;
   isAdjacent: boolean;
   seed: number;
   onMove: () => void;
@@ -95,20 +96,6 @@ const MapCell: React.FC<MapCellProps> = React.memo(
             {x},{y}
           </span>
         )}
-
-        {cell.feature && cell.revealed ? (
-          <span
-            className={
-              cell.feature === "start" || cell.feature === "end"
-                ? "text-3xl font-bold text-amber-600 opacity-70"
-                : "text-lg"
-            }
-          >
-            {TILE_VISUALS[cell.feature]}
-          </span>
-        ) : (
-          <span className="text-lg">{TILE_VISUALS[cell.type]}</span>
-        )}
       </div>
     );
   },
@@ -133,7 +120,10 @@ const PlayerLayer: React.FC<PlayerLayerProps> = React.memo(
 
     return (
       <div className="absolute inset-0 flex items-center justify-center z-10">
-        <div className="bg-green-600 w-6 h-6 rounded-full" />
+        <div
+          className="bg-green-600 w-6 h-6 rounded-full transition-all duration-75 ease-out
+            animate-player-move"
+        />
       </div>
     );
   },
@@ -142,4 +132,4 @@ const PlayerLayer: React.FC<PlayerLayerProps> = React.memo(
     (next.x !== next.playerPosition.x || next.y !== next.playerPosition.y)
 );
 
-export default TravelTunnelGrid;
+export default GridMapComponent;

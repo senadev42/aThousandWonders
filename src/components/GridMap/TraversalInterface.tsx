@@ -1,7 +1,7 @@
 import { useEffect } from "react";
 import { useSnapshot } from "valtio";
 import { useTravelStore } from "./store";
-import TacticalGrid from "./TacticalGrid";
+import GridMapComponent from "./GridMapComponent";
 
 const TraversalInterface = () => {
   const { state, initializeGrid } = useTravelStore();
@@ -19,7 +19,7 @@ const TraversalInterface = () => {
         {/* Charting Grid */}
         {isInitialized && (
           <div className="flex flex-col space-y-2">
-            <TacticalGrid />
+            <GridMapComponent />
           </div>
         )}
       </div>

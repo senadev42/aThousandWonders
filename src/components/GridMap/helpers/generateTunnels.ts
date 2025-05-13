@@ -1,6 +1,5 @@
-import { BASE_TILES, FEATURES, GRID_HEIGHT, GRID_WIDTH } from "../constants";
-import { CoordString, TacticalGridCell } from "../store/state";
-import { generateFeatures } from "./generateFeatures";
+import { BASE_TILES, GRID_HEIGHT, GRID_WIDTH } from "../store/state";
+import { BaseCell } from "../store/state";
 
 const getNeighbors = (x: number, y: number): number[][] => {
   const neighbors = [];
@@ -43,13 +42,11 @@ export const generateTunnels = (
   endY: number,
   seed: number,
   emptyMap: boolean = false
-): TacticalGridCell[][] => {
+): BaseCell[][] => {
   if (emptyMap) {
     return Array.from({ length: GRID_HEIGHT }, () =>
       Array.from({ length: GRID_WIDTH }, () => ({
         type: BASE_TILES.FLOOR,
-        depth: 0,
-        feature: null,
         revealed: true,
       }))
     );
@@ -58,15 +55,11 @@ export const generateTunnels = (
   const seedRandom = createSeededRandom(seed);
 
   // Initialize grid with walls
-  let newTacticalGridMap: TacticalGridCell[][] = Array.from(
-    { length: GRID_HEIGHT },
-    () =>
-      Array.from({ length: GRID_WIDTH }, () => ({
-        type: BASE_TILES.WALL,
-        depth: 0,
-        feature: null,
-        revealed: false,
-      }))
+  let newBaseScene: BaseCell[][] = Array.from({ length: GRID_HEIGHT }, () =>
+    Array.from({ length: GRID_WIDTH }, () => ({
+      type: BASE_TILES.WALL,
+      revealed: false,
+    }))
   );
 
   console.log(
@@ -81,9 +74,8 @@ export const generateTunnels = (
 
   // carve a tunnel between them
   for (let x = startX; x <= endX; x++) {
-    newTacticalGridMap[startY][x] = {
+    newBaseScene[startY][x] = {
       type: BASE_TILES.FLOOR,
-      feature: null,
       revealed: false,
     };
   }
@@ -106,9 +98,8 @@ export const generateTunnels = (
       const midY = (currentY + nextY) / 2;
 
       // Create tunnel segments
-      newTacticalGridMap[currentY][currentX].type = BASE_TILES.FLOOR;
-      newTacticalGridMap[Math.floor(midY)][Math.floor(midX)].type =
-        BASE_TILES.FLOOR;
+      newBaseScene[currentY][currentX].type = BASE_TILES.FLOOR;
+      newBaseScene[Math.floor(midY)][Math.floor(midX)].type = BASE_TILES.FLOOR;
 
       stack.push([nextX, nextY]);
     } else {
@@ -116,18 +107,12 @@ export const generateTunnels = (
     }
   }
 
-  newTacticalGridMap = generateFeatures(newTacticalGridMap);
-
-  // Mark start and end positions
-  newTacticalGridMap[startY][startX].feature = FEATURES.START;
-  newTacticalGridMap[endY][endX].feature = FEATURES.END;
-
   //Illuminate the known path forward,
   let currentX = startX - 1;
   while (currentX < endX) {
     currentX++;
-    newTacticalGridMap[startY][currentX].revealed = true;
+    newBaseScene[startY][currentX].revealed = true;
   }
 
-  return newTacticalGridMap;
+  return newBaseScene;
 };

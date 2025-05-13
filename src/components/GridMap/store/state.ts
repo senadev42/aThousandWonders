@@ -1,19 +1,34 @@
 // state.ts
 import { proxy } from "valtio";
-import { BASE_TILES, GRID_HEIGHT } from "../constants";
 
-export type TacticalGridCell = {
+export const GRID_WIDTH = 15;
+export const GRID_HEIGHT = 13;
+
+//Base Scene Types
+export enum BASE_TILES {
+  WALL = "wall",
+  FLOOR = "floor",
+}
+export type BaseCellType = BASE_TILES.WALL | BASE_TILES.FLOOR;
+
+export type BaseCell = {
   type: BaseCellType;
-  feature: FeatureType | null;
   revealed: boolean;
 };
 
-export type TacticalGridMap = TacticalGridCell[][];
+export type BaseScene = BaseCell[][];
 
-export interface TacticalMapState {
+export type GridPosition = {
+  x: number;
+  y: number;
+};
+
+//Scene Data -
+
+export interface GridMapState {
   isInitialized: boolean;
   seed: number;
-  tacticalGridMap: TacticalGridMap;
+  currentScene: BaseScene;
   playerPosition: GridPosition;
   debugSettings: {
     showCoords: boolean;
@@ -26,10 +41,10 @@ export interface TacticalMapState {
   };
 }
 
-export const tacticalMapState = proxy<TacticalMapState>({
+export const gridMapState = proxy<GridMapState>({
   isInitialized: false,
   seed: 0,
-  tacticalGridMap: [],
+  currentScene: [],
   playerPosition: {
     x: 0,
     y: Math.round(GRID_HEIGHT / 2),
@@ -46,26 +61,4 @@ export const tacticalMapState = proxy<TacticalMapState>({
   },
 });
 
-export const useTacticalMapState = () => tacticalMapState;
-
-export type BaseCellType = BASE_TILES.WALL | BASE_TILES.FLOOR;
-
-export type FeatureType =
-  | "ruin"
-  | "crystal"
-  | "danger"
-  | "start"
-  | "end"
-  | null;
-
-export type GridPosition = {
-  x: number;
-  y: number;
-};
-
-//types
-export type CoordString = `${number},${number}`;
-
-export type BaseTile = "wall" | "tunnel";
-
-export type BaseGridMap = BaseTile[][];
+export const useGridMapState = () => gridMapState;

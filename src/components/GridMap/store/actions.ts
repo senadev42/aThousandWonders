@@ -1,15 +1,15 @@
 // actions.ts
 import {
   GridPosition,
-  TacticalGridMap,
-  TacticalMapState,
-  useTacticalMapState,
+  BaseScene,
+  GridMapState,
+  useGridMapState,
 } from "./state";
 import { generateTunnels } from "../helpers/generateTunnels";
-import { BASE_TILES, GRID_HEIGHT, GRID_WIDTH } from "../constants";
+import { BASE_TILES, GRID_HEIGHT, GRID_WIDTH } from "./state";
 
 export const useTravelActions = () => {
-  const state = useTacticalMapState();
+  const state = useGridMapState();
 
   const initializeGrid = (emptyMap?: boolean) => {
     state.isInitialized = false;
@@ -18,7 +18,7 @@ export const useTravelActions = () => {
 
     state.seed = Math.floor(Math.random() * 10000);
 
-    state.tacticalGridMap = generateTunnels(
+    state.currentScene = generateTunnels(
       0,
       startY,
       GRID_WIDTH - 1,
@@ -31,13 +31,13 @@ export const useTravelActions = () => {
   };
 
   const movePlayer = (x: number, y: number): void => {
-    if (!isValidMove(x, y, state.playerPosition, state.tacticalGridMap)) return;
-    state.tacticalGridMap = revealAreaAround(x, y, state.tacticalGridMap);
+    if (!isValidMove(x, y, state.playerPosition, state.currentScene)) return;
+    state.currentScene = revealAreaAround(x, y, state.currentScene);
     state.playerPosition = { x, y };
   };
 
   const updateDebugSettings = (
-    settings: Partial<TacticalMapState["debugSettings"]>
+    settings: Partial<GridMapState["debugSettings"]>
   ) => {
     state.debugSettings = {
       ...state.debugSettings,
@@ -57,15 +57,21 @@ function isInBounds(x: number, y: number): boolean {
   return x >= 0 && x < GRID_WIDTH && y >= 0 && y < GRID_HEIGHT;
 }
 
-function isAdjacent(x: number, y: number, playerPos: GridPosition): boolean {
-  return Math.abs(x - playerPos.x) + Math.abs(y - playerPos.y) === 1;
+export function isAdjacent(
+  x: number,
+  y: number,
+  playerPos: GridPosition,
+  isWall?: boolean
+): boolean {
+  if (isWall) return false;
+  return Math.max(Math.abs(x - playerPos.x), Math.abs(y - playerPos.y)) === 1;
 }
 
 function isValidMove(
   targetX: number,
   targetY: number,
   playerPos: GridPosition,
-  map: TacticalGridMap
+  map: BaseScene
 ): boolean {
   return (
     isInBounds(targetX, targetY) &&
@@ -77,10 +83,10 @@ function isValidMove(
 function revealAreaAround(
   x: number,
   y: number,
-  tacticalGridMap: TacticalGridMap
-): TacticalGridMap {
+  currentScene: BaseScene
+): BaseScene {
   // Create new map copy
-  const newMap = tacticalGridMap.map((row) =>
+  const newMap = currentScene.map((row) =>
     [...row].map((cell) => ({ ...cell }))
   );
 

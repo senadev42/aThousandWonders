@@ -7,7 +7,7 @@ export enum Views {
 }
 
 export const gameState = proxy({
-  currentView: Views.STRATEGIC,
+  currentView: Views.LOCAL,
   setView: (view: Views) => {
     gameState.currentView = view;
   },

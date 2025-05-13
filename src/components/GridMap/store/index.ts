@@ -1,9 +1,9 @@
 // index.ts
-import { useTacticalMapState } from "./state";
+import { useGridMapState } from "./state";
 import { useTravelActions } from "./actions";
 
 export const useTravelStore = () => {
-  const state = useTacticalMapState();
+  const state = useGridMapState();
   const actions = useTravelActions();
 
   return {

@@ -40,18 +40,8 @@ export const generateTunnels = (
   startY: number,
   endX: number,
   endY: number,
-  seed: number,
-  emptyMap: boolean = false
+  seed: number
 ): BaseCell[][] => {
-  if (emptyMap) {
-    return Array.from({ length: GRID_HEIGHT }, () =>
-      Array.from({ length: GRID_WIDTH }, () => ({
-        type: BaseTiles.FLOOR,
-        revealed: true,
-      }))
-    );
-  }
-
   const seedRandom = createSeededRandom(seed);
 
   // Initialize grid with walls

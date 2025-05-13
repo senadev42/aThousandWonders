@@ -41,8 +41,6 @@ export type Scene = SceneParams & {
 
 export interface GridMapState {
   isInitialized: boolean;
-  seed: number;
-
   currentScene: Scene;
 
   playerPosition: GridPosition;
@@ -59,7 +57,6 @@ export interface GridMapState {
 
 export const gridMapState = proxy<GridMapState>({
   isInitialized: false,
-  seed: 0,
   currentScene: {
     sceneType: SceneType.EMPTY,
     data: Array.from({ length: GRID_HEIGHT }, () =>
@@ -80,7 +77,7 @@ export const gridMapState = proxy<GridMapState>({
   get debugInfo() {
     return {
       playerPosition: `X: ${this.playerPosition.x} Y: ${this.playerPosition.y}`,
-      seed: this.seed,
+      seed: this.currentScene.seed || 0,
     };
   },
 });

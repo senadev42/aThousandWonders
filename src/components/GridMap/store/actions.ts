@@ -19,38 +19,55 @@ export const useTravelActions = () => {
     const startY = Math.floor(GRID_HEIGHT / 2);
     const endY = Math.floor(GRID_HEIGHT / 2);
 
-    state.seed = Math.floor(Math.random() * 10000);
-
     let newScene: BaseScene;
 
     switch (sceneParams.sceneType) {
       case SceneType.RANDOM:
-        newScene = generateTunnels(0, startY, GRID_WIDTH - 1, endY, state.seed);
-        break;
+        console.log("generating random map with seed", sceneParams.seed);
 
-      case SceneType.EMPTY:
+        if (!sceneParams.seed)
+          throw new Error("Seed is required for random scene generation");
+
         newScene = generateTunnels(
           0,
           startY,
           GRID_WIDTH - 1,
           endY,
-          state.seed,
-          true
+          sceneParams.seed
         );
+
+        state.currentScene = {
+          sceneType: SceneType.RANDOM,
+          seed: sceneParams.seed,
+          data: newScene,
+        };
+
+        break;
+
+      case SceneType.EMPTY:
+        newScene = Array.from({ length: GRID_HEIGHT }, () =>
+          Array.from({ length: GRID_WIDTH }, () => ({
+            type: BaseTiles.FLOOR,
+            revealed: true,
+          }))
+        );
+
+        state.currentScene = {
+          sceneType: SceneType.EMPTY,
+          data: newScene,
+        };
+
         break;
 
       case SceneType.PREMADE:
-        if (!sceneParams.sceneId)
-          throw new Error("Scene ID required for premade scenes");
-        newScene = generateTunnels(0, startY, GRID_WIDTH - 1, endY, state.seed); // Add this line
+        console.log("Loading premade scene:", sceneParams.sceneId);
+        throw new Error("Not implemented yet");
+
         break;
 
       default:
-        throw new Error(`Unknown scene type: ${sceneParams.sceneType}`);
+        throw new Error(`Unknown scene type`);
     }
-
-    state.currentScene.data = newScene;
-    state.currentScene.sceneType = sceneParams.sceneType;
 
     state.isInitialized = true;
   };

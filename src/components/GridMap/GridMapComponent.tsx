@@ -8,8 +8,7 @@ import GridDebugMenu from "./DebugGridMap";
 
 const GridMapComponent = () => {
   const { movePlayer, state } = useTravelStore();
-  const { currentScene, playerPosition, seed, debugSettings } =
-    useSnapshot(state);
+  const { currentScene, playerPosition, debugSettings } = useSnapshot(state);
 
   return (
     <div className="flex flex-col  gap-2">
@@ -29,6 +28,8 @@ const GridMapComponent = () => {
               cell.type === "wall" ? true : false
             );
 
+            const cellHash = `${cell.type}-${cell.revealed}-${isCellAdjacent}-${x}-${y}-${currentScene.seed}-${currentScene.sceneId}-${debugSettings.showCoords}`;
+
             return (
               <div key={`${x}-${y}`} className="relative">
                 {/* Base map layer */}
@@ -37,7 +38,7 @@ const GridMapComponent = () => {
                   y={y}
                   cell={cell}
                   isAdjacent={isCellAdjacent}
-                  seed={seed}
+                  cellHash={cellHash}
                   onMove={() => movePlayer(x, y)}
                   debugSettings={debugSettings}
                 />
@@ -60,7 +61,7 @@ type MapCellProps = {
   y: number;
   cell: BaseCell;
   isAdjacent: boolean;
-  seed: number;
+  cellHash: string;
   onMove: () => void;
   debugSettings: {
     showCoords: boolean;
@@ -99,11 +100,7 @@ const MapCell: React.FC<MapCellProps> = React.memo(
       </div>
     );
   },
-  (prev, next) =>
-    prev.seed === next.seed &&
-    prev.cell.revealed === next.cell.revealed &&
-    prev.isAdjacent === next.isAdjacent &&
-    prev.debugSettings.showCoords === next.debugSettings.showCoords
+  (prev, next) => prev.cellHash === next.cellHash
 );
 
 type PlayerLayerProps = {

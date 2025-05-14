@@ -30,16 +30,14 @@ const GridMapComponent = () => {
     endY: 0,
   };
 
-  const borderWidth = 0.5;
-
   return (
     <div className="flex flex-col gap-2 items-center justify-start w-full mt-10">
       <div
         ref={scrollRef}
         className="border-4 border-black rounded bg-gray-900 overflow-auto flex scrollbar-none"
         style={{
-          width: `${VIEWPORT_WIDTH * CELL_SIZE + 5}px`,
-          height: `${VIEWPORT_HEIGHT * CELL_SIZE + 5}px`,
+          width: `${VIEWPORT_WIDTH * CELL_SIZE + 8}px`,
+          height: `${VIEWPORT_HEIGHT * CELL_SIZE + 8}px`,
         }}
       >
         <div className="relative inline-block">
@@ -162,7 +160,7 @@ const Player: React.FC = () => {
   return (
     <div className="absolute inset-0 flex items-center justify-center z-10">
       <div
-        className="bg-green-600 w-6 h-6 rounded-full transition-all duration-75 ease-out
+        className="bg-slate-300 w-6 h-6 rounded-full transition-all duration-75 ease-out
             animate-player-move"
       />
     </div>

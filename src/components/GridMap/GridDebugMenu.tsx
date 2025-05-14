@@ -8,9 +8,13 @@ const GridDebugMenu = () => {
   const { state, initializeScene, updateDebugSettings } = useTravelStore();
   const { debugInfo } = useSnapshot(state);
 
-  const [selectedType, setSelectedType] = useState<SceneType>(SceneType.EMPTY);
+  const [selectedType, setSelectedType] = useState<SceneType>(
+    state.currentScene.sceneType
+  );
   const [seed, setSeed] = useState<string>("");
-  const [sceneId, setSceneId] = useState<string>("");
+  const [sceneId, setSceneId] = useState<string>(
+    state.currentScene.sceneId || ""
+  );
 
   const handleSceneSelect = () => {
     switch (selectedType) {
@@ -98,7 +102,6 @@ const GridDebugMenu = () => {
                   value={sceneId}
                   onChange={(e) => setSceneId(e.target.value)}
                 >
-                  <option value="">Select a scene...</option>
                   {Object.entries(availableScenes).map(([id, scene]) => (
                     <option key={id} value={id}>
                       {scene.name}

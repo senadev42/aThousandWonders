@@ -1,10 +1,10 @@
 // state.ts
 import { proxy } from "valtio";
 
-export const VIEWPORT_WIDTH = 13;
+export const VIEWPORT_WIDTH = 15;
 export const VIEWPORT_HEIGHT = 13;
 
-export const CELL_SIZE = 36;
+export const CELL_SIZE = 35;
 
 //Base Scene Types
 export enum BaseTiles {
@@ -78,12 +78,7 @@ export const gridMapState = proxy<GridMapState>({
   currentScene: {
     //default empty scene
     sceneType: SceneType.EMPTY,
-    data: Array.from({ length: VIEWPORT_HEIGHT }, () =>
-      Array.from({ length: VIEWPORT_WIDTH }, () => ({
-        type: BaseTiles.FLOOR,
-        revealed: true,
-      }))
-    ),
+    data: [],
     width: VIEWPORT_WIDTH,
     height: VIEWPORT_HEIGHT,
   },

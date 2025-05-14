@@ -16,8 +16,6 @@ const processScene = (scene: RawScene): Scene => {
   const height = scene.layout.length;
   const width = scene.layout[0].length;
 
-  console.log("Processing scene", scene.id, "with dimensions", width, height);
-
   // First pass: Create base grid
   for (let y = 0; y < height; y++) {
     const row: BaseCell[] = [];
@@ -29,7 +27,7 @@ const processScene = (scene: RawScene): Scene => {
 
       row.push({
         type,
-        revealed: true,
+        revealed: false,
         feature: undefined,
       });
     }
@@ -50,53 +48,50 @@ const processScene = (scene: RawScene): Scene => {
     sceneType: SceneType.PREMADE,
     sceneId: scene.id,
     name: scene.name,
-    width,
-    height,
+    width: processedData[0].length,
+    height: processedData.length,
     data: processedData,
   };
 };
 
-export const padSceneToViewport = (
+export function padSceneToViewport(
   scene: Scene,
   viewportWidth: number,
   viewportHeight: number
-): Scene => {
+): Scene {
   if (scene.width >= viewportWidth && scene.height >= viewportHeight) {
     return scene;
   }
 
-  const paddedWidth = Math.max(scene.width, viewportWidth);
-  const paddedHeight = Math.max(scene.height, viewportHeight);
+  const horizontalPadding = Math.floor((viewportWidth - scene.width) / 2);
+  const verticalPadding = Math.floor((viewportHeight - scene.height) / 2);
 
-  // Calculate padding for centering
-  const xOffset = Math.floor((paddedWidth - scene.width) / 2);
-  const yOffset = Math.floor((paddedHeight - scene.height) / 2);
-
-  // Create new padded data array filled with walls
-  const paddedData: BaseCell[][] = Array.from(
-    { length: paddedHeight - 1 },
-    () =>
-      Array.from({ length: paddedWidth - 1 }, () => ({
-        type: BaseTiles.WALL,
-        revealed: true,
-        feature: undefined,
-      }))
+  // Create new padded data array
+  const paddedData: BaseCell[][] = Array.from({ length: viewportHeight }, () =>
+    Array.from({ length: viewportWidth }, () => ({
+      type: BaseTiles.WALL,
+      revealed: false,
+    }))
   );
 
-  // Copy original scene data to center of padded array
+  // Copy original scene data into center of padded array
   for (let y = 0; y < scene.height; y++) {
     for (let x = 0; x < scene.width; x++) {
-      paddedData[y + yOffset][x + xOffset] = scene.data[y][x];
+      if (scene.data[y]?.[x]) {
+        const newY = y + verticalPadding;
+        const newX = x + horizontalPadding;
+        paddedData[newY][newX] = { ...scene.data[y][x] };
+      }
     }
   }
 
   return {
     ...scene,
-    width: paddedWidth,
-    height: paddedHeight,
+    width: viewportWidth,
+    height: viewportHeight,
     data: paddedData,
   };
-};
+}
 
 export const availableScenes: Record<string, Scene> = {
   tavern_1: processScene(tavernScene),
@@ -104,7 +99,5 @@ export const availableScenes: Record<string, Scene> = {
 };
 
 export const getSceneById = (id: string): Scene => {
-  console.log("Processing scene", id, "with dimensions");
-
   return availableScenes[id];
 };

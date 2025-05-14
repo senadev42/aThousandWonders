@@ -69,8 +69,6 @@ export const useTravelActions = () => {
       case SceneType.PREMADE: {
         if (!sceneParams.sceneId) throw new Error("Scene ID required");
 
-        console.log("loading premade scene with id", sceneParams.sceneId);
-
         let newLoadedScene = getSceneById(sceneParams.sceneId);
         if (!newLoadedScene)
           throw new Error(`Scene ${sceneParams.sceneId} not found`);
@@ -94,6 +92,12 @@ export const useTravelActions = () => {
       default:
         throw new Error(`Unknown scene type`);
     }
+
+    revealAreaAround(
+      state.playerPosition.x,
+      state.playerPosition.y,
+      state.currentScene.data
+    );
 
     state.isInitialized = true;
   };
@@ -128,11 +132,6 @@ export const useTravelActions = () => {
   };
 };
 
-//Utild
-function isInBounds(x: number, y: number): boolean {
-  return x >= 0 && x < VIEWPORT_WIDTH && y >= 0 && y < VIEWPORT_HEIGHT;
-}
-
 export function isAdjacent(
   x: number,
   y: number,
@@ -163,17 +162,24 @@ function revealAreaAround(x: number, y: number, data: BaseScene): BaseScene {
   newMap[y][x].revealed = true;
 
   const adjacentPositions = [
-    [x - 1, y],
-    [x + 1, y],
-    [x, y - 1],
-    [x, y + 1],
-  ].filter(([x, y]) => isInBounds(x, y));
+    [x - 1, y], // left
+    [x + 1, y], // right
+    [x, y - 1], // top
+    [x, y + 1], // bottom
+    [x - 1, y - 1], // top-left
+    [x + 1, y - 1], // top-right
+    [x - 1, y + 1], // bottom-left
+    [x + 1, y + 1], // bottom-right
+  ];
 
   adjacentPositions.forEach(([adjX, adjY]) => {
-    if (newMap[adjY][adjX].type === BaseTiles.FLOOR) {
+    if (
+      newMap[adjY] &&
+      newMap[adjY][adjX] &&
+      newMap[adjY][adjX].type === BaseTiles.FLOOR
+    ) {
       newMap[adjY][adjX].revealed = true;
     }
   });
-
   return newMap;
 }

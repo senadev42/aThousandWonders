@@ -57,10 +57,6 @@ export const generateTunnels = (
     }))
   );
 
-  console.log(
-    `Generating tunnels from (${startX}, ${startY}) to (${endX}, ${endY})`
-  );
-
   const stack = [
     [startX, startY],
     [endX, endY],

@@ -10,7 +10,7 @@ const TraversalInterface = () => {
 
   useEffect(() => {
     if (!isInitialized) {
-      initializeScene({ sceneType: SceneType.EMPTY });
+      initializeScene({ sceneType: SceneType.PREMADE, sceneId: "tavern_1" });
     }
   }, []);
 

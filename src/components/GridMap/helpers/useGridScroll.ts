@@ -2,14 +2,14 @@
 import { useCallback, useEffect, useState } from "react";
 
 const CELL_SIZE = 36;
-const VISIBILITY_PADDING = 5;
+const VISIBILITY_PADDING = 3;
 
 // Viewport dimensions in cells
 const VIEWPORT_WIDTH = 15;
 const VIEWPORT_HEIGHT = 13;
 
 // How many cells to render beyond the viewport edges
-const OVERSCAN = 1;
+const OVERSCAN = 3;
 
 // Total cells to render including overscan
 const TOTAL_VISIBLE_WIDTH = VIEWPORT_WIDTH + OVERSCAN * 2; // 17

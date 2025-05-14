@@ -2,11 +2,10 @@
 import { useSnapshot } from "valtio";
 import { useTravelStore } from "./store";
 import { isAdjacent } from "./store/actions";
-import { GridPosition, BaseCell, Scene } from "./store/state";
+import { BaseCell } from "./store/state";
 import React, { useRef } from "react";
 import GridDebugMenu from "./GridDebugMenu";
 import { useGridScroll } from "./helpers/useGridScroll";
-import { useKeyboardControls } from "./helpers/useKeyboardControls";
 
 const CELL_SIZE = 36;
 
@@ -27,8 +26,6 @@ const GridMapComponent = () => {
     startY: 0,
     endY: 0,
   };
-
-  useKeyboardControls(playerPosition, currentScene as Scene, movePlayer);
 
   return (
     <div className="flex flex-col gap-2">
@@ -84,11 +81,10 @@ const GridMapComponent = () => {
                           onMove={() => movePlayer(x, y)}
                           debugSettings={debugSettings}
                         />
-                        <PlayerLayer
-                          x={x}
-                          y={y}
-                          playerPosition={playerPosition}
-                        />
+
+                        {playerPosition.x == x && playerPosition.y == y && (
+                          <Player />
+                        )}
                       </div>
                     );
                   });
@@ -153,31 +149,13 @@ const MapCell: React.FC<MapCellProps> = React.memo(
   }
 );
 
-type PlayerLayerProps = {
-  x: number;
-  y: number;
-  playerPosition: GridPosition;
-};
-
-const PlayerLayer: React.FC<PlayerLayerProps> = React.memo(
-  ({ x, y, playerPosition }: PlayerLayerProps) => {
-    const isPlayerHere = x === playerPosition.x && y === playerPosition.y;
-
-    if (!isPlayerHere) return null;
-
-    return (
-      <div className="absolute inset-0 flex items-center justify-center z-10">
-        <div
-          className="bg-green-600 w-6 h-6 rounded-full transition-all duration-75 ease-out
+const Player: React.FC = () => {
+  return (
+    <div className="absolute inset-0 flex items-center justify-center z-10">
+      <div
+        className="bg-green-600 w-6 h-6 rounded-full transition-all duration-75 ease-out
             animate-player-move"
-        />
-      </div>
-    );
-  },
-  (prev, next) => {
-    return (
-      (prev.x !== prev.playerPosition.x || prev.y !== prev.playerPosition.y) ===
-      (next.x !== next.playerPosition.x || next.y !== next.playerPosition.y)
-    );
-  }
-);
+      />
+    </div>
+  );
+};

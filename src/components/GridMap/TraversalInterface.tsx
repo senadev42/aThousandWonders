@@ -14,18 +14,15 @@ const TraversalInterface = () => {
     }
   }, []);
 
-  return (
-    <div className="flex md:flex-row flex-col gap-2">
-      <div className="flex flex-col space-y-2 m-10 md:m-auto">
-        {/* Charting Grid */}
-        {isInitialized && (
-          <div className="flex flex-col space-y-2">
-            <GridMapComponent />
-          </div>
-        )}
+  if (!isInitialized) {
+    return (
+      <div className="flex flex-col items-center justify-center">
+        <p className="text-gray-200">Loading...</p>
       </div>
-    </div>
-  );
+    );
+  }
+
+  return <GridMapComponent />;
 };
 
 // Grid Component

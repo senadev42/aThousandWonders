@@ -6,9 +6,11 @@ import {
   useGridMapState,
   SceneParams,
   SceneType,
+  VIEWPORT_WIDTH,
+  VIEWPORT_HEIGHT,
+  BaseTiles,
 } from "./state";
 import { generateTunnels } from "../helpers/generateTunnels";
-import { BaseTiles, GRID_HEIGHT, GRID_WIDTH } from "./state";
 import { getSceneById, padSceneToViewport } from "../scenes/sceneProcessor";
 
 export const useTravelActions = () => {
@@ -26,13 +28,13 @@ export const useTravelActions = () => {
         if (!sceneParams.seed)
           throw new Error("Seed is required for random scene generation");
 
-        const startY = Math.floor(GRID_HEIGHT / 2);
-        const endY = Math.floor(GRID_HEIGHT + GRID_HEIGHT);
+        const startY = Math.floor(VIEWPORT_HEIGHT / 2);
+        const endY = Math.floor(VIEWPORT_HEIGHT + VIEWPORT_HEIGHT);
 
         const newRandomScene: BaseScene = generateTunnels(
           0,
           startY,
-          GRID_WIDTH - 1,
+          VIEWPORT_WIDTH - 1,
           endY,
           sceneParams.seed
         );
@@ -41,15 +43,15 @@ export const useTravelActions = () => {
           sceneType: SceneType.RANDOM,
           seed: sceneParams.seed,
           data: newRandomScene,
-          width: GRID_WIDTH,
-          height: GRID_HEIGHT,
+          width: VIEWPORT_WIDTH,
+          height: VIEWPORT_HEIGHT,
         };
 
         break;
 
       case SceneType.EMPTY:
-        const newEmptyScene = Array.from({ length: GRID_HEIGHT }, () =>
-          Array.from({ length: GRID_WIDTH }, () => ({
+        const newEmptyScene = Array.from({ length: VIEWPORT_HEIGHT }, () =>
+          Array.from({ length: VIEWPORT_WIDTH }, () => ({
             type: BaseTiles.FLOOR,
             revealed: true,
           }))
@@ -58,8 +60,8 @@ export const useTravelActions = () => {
         state.currentScene = {
           sceneType: SceneType.EMPTY,
           data: newEmptyScene,
-          width: GRID_WIDTH,
-          height: GRID_HEIGHT,
+          width: VIEWPORT_WIDTH,
+          height: VIEWPORT_HEIGHT,
         };
 
         break;
@@ -75,8 +77,8 @@ export const useTravelActions = () => {
 
         newLoadedScene = padSceneToViewport(
           newLoadedScene,
-          GRID_WIDTH,
-          GRID_HEIGHT
+          VIEWPORT_WIDTH,
+          VIEWPORT_HEIGHT
         );
 
         state.currentScene = {
@@ -128,7 +130,7 @@ export const useTravelActions = () => {
 
 //Utild
 function isInBounds(x: number, y: number): boolean {
-  return x >= 0 && x < GRID_WIDTH && y >= 0 && y < GRID_HEIGHT;
+  return x >= 0 && x < VIEWPORT_WIDTH && y >= 0 && y < VIEWPORT_HEIGHT;
 }
 
 export function isAdjacent(

@@ -1,19 +1,11 @@
 // useGridScroll.ts
 import { useCallback, useEffect, useState } from "react";
+import { CELL_SIZE, VIEWPORT_HEIGHT, VIEWPORT_WIDTH } from "../store/state";
 
-const CELL_SIZE = 36;
-const VISIBILITY_PADDING = 3;
-
-// Viewport dimensions in cells
-const VIEWPORT_WIDTH = 15;
-const VIEWPORT_HEIGHT = 13;
+const VISIBILITY_PADDING = 4;
 
 // How many cells to render beyond the viewport edges
-const OVERSCAN = 3;
-
-// Total cells to render including overscan
-const TOTAL_VISIBLE_WIDTH = VIEWPORT_WIDTH + OVERSCAN * 2; // 17
-const TOTAL_VISIBLE_HEIGHT = VIEWPORT_HEIGHT + OVERSCAN * 2; // 15
+const OVERSCAN = 4;
 
 export const useGridScroll = (
   scrollRef: React.RefObject<HTMLDivElement | null>,
@@ -27,6 +19,10 @@ export const useGridScroll = (
     startY: 0,
     endY: 13,
   });
+
+  // Total cells to render including overscan
+  const TOTAL_VISIBLE_WIDTH = VIEWPORT_WIDTH + OVERSCAN * 2; // 17
+  const TOTAL_VISIBLE_HEIGHT = VIEWPORT_HEIGHT + OVERSCAN * 2; // 15
 
   const handleScroll = useCallback(() => {
     if (!scrollRef.current) return;

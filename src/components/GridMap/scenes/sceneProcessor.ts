@@ -1,6 +1,8 @@
 //sceneProcessor.ts
 import { BaseCell, BaseTiles, Scene, SceneType } from "../store/state";
+
 import tavernScene from "./testTavernScene.json";
+import testSmol from "./testSmolScene.json";
 
 export interface RawScene {
   id: string;
@@ -98,6 +100,7 @@ export const padSceneToViewport = (
 
 export const availableScenes: Record<string, Scene> = {
   tavern_1: processScene(tavernScene),
+  tavern_smol: processScene(testSmol),
 };
 
 export const getSceneById = (id: string): Scene => {

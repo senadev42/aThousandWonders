@@ -2,12 +2,15 @@
 import { useSnapshot } from "valtio";
 import { useTravelStore } from "./store";
 import { isAdjacent } from "./store/actions";
-import { BaseCell } from "./store/state";
+import {
+  BaseCell,
+  CELL_SIZE,
+  VIEWPORT_HEIGHT,
+  VIEWPORT_WIDTH,
+} from "./store/state";
 import React, { useRef } from "react";
 import GridDebugMenu from "./GridDebugMenu";
 import { useGridScroll } from "./helpers/useGridScroll";
-
-const CELL_SIZE = 36;
 
 const GridMapComponent = () => {
   const { movePlayer, state } = useTravelStore();
@@ -27,11 +30,17 @@ const GridMapComponent = () => {
     endY: 0,
   };
 
+  const borderWidth = 0.5;
+
   return (
-    <div className="flex flex-col gap-2">
+    <div className="flex flex-col gap-2 items-center justify-start w-full mt-10">
       <div
         ref={scrollRef}
-        className="w-[548px] h-[478px] border-4 border-black rounded bg-gray-900 overflow-auto flex scrollbar-none"
+        className="border-4 border-black rounded bg-gray-900 overflow-auto flex scrollbar-none"
+        style={{
+          width: `${VIEWPORT_WIDTH * CELL_SIZE + 5}px`,
+          height: `${VIEWPORT_HEIGHT * CELL_SIZE + 5}px`,
+        }}
       >
         <div className="relative inline-block">
           <div

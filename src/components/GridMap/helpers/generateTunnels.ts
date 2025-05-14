@@ -1,4 +1,4 @@
-import { BaseTiles, GRID_HEIGHT, GRID_WIDTH } from "../store/state";
+import { BaseTiles, VIEWPORT_HEIGHT, VIEWPORT_WIDTH } from "../store/state";
 import { BaseCell } from "../store/state";
 
 const getNeighbors = (x: number, y: number): number[][] => {
@@ -13,7 +13,12 @@ const getNeighbors = (x: number, y: number): number[][] => {
   for (const [dx, dy] of directions) {
     const newX = x + dx;
     const newY = y + dy;
-    if (newX >= 0 && newX < GRID_WIDTH && newY >= 0 && newY < GRID_HEIGHT) {
+    if (
+      newX >= 0 &&
+      newX < VIEWPORT_WIDTH &&
+      newY >= 0 &&
+      newY < VIEWPORT_HEIGHT
+    ) {
       neighbors.push([newX, newY]);
     }
   }
@@ -45,8 +50,8 @@ export const generateTunnels = (
   const seedRandom = createSeededRandom(seed);
 
   // Initialize grid with walls
-  let newBaseScene: BaseCell[][] = Array.from({ length: GRID_HEIGHT }, () =>
-    Array.from({ length: GRID_WIDTH }, () => ({
+  let newBaseScene: BaseCell[][] = Array.from({ length: VIEWPORT_HEIGHT }, () =>
+    Array.from({ length: VIEWPORT_WIDTH }, () => ({
       type: BaseTiles.WALL,
       revealed: false,
     }))

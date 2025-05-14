@@ -1,8 +1,10 @@
 // state.ts
 import { proxy } from "valtio";
 
-export const GRID_WIDTH = 15;
-export const GRID_HEIGHT = 13;
+export const VIEWPORT_WIDTH = 13;
+export const VIEWPORT_HEIGHT = 13;
+
+export const CELL_SIZE = 36;
 
 //Base Scene Types
 export enum BaseTiles {
@@ -36,18 +38,27 @@ export type SceneParams = {
   sceneId?: string;
 };
 
-export type Scene = SceneParams & {
-  data: BaseScene;
+export type Dimensions = {
   width: number;
   height: number;
-  name?: string;
 };
 
+export type Scene = SceneParams &
+  Dimensions & {
+    data: BaseScene;
+    name?: string;
+  };
+
 export interface GridMapState {
+  //scene metadata
   isInitialized: boolean;
+
+  //scene content
   currentScene: Scene;
 
+  //entity data
   playerPosition: GridPosition;
+
   debugSettings: {
     showCoords: boolean;
   };
@@ -60,22 +71,28 @@ export interface GridMapState {
 }
 
 export const gridMapState = proxy<GridMapState>({
+  //scene metadata
   isInitialized: false,
+
+  //scene content
   currentScene: {
+    //default empty scene
     sceneType: SceneType.EMPTY,
-    data: Array.from({ length: GRID_HEIGHT }, () =>
-      Array.from({ length: GRID_WIDTH }, () => ({
+    data: Array.from({ length: VIEWPORT_HEIGHT }, () =>
+      Array.from({ length: VIEWPORT_WIDTH }, () => ({
         type: BaseTiles.FLOOR,
         revealed: true,
       }))
     ),
-    width: GRID_WIDTH,
-    height: GRID_HEIGHT,
+    width: VIEWPORT_WIDTH,
+    height: VIEWPORT_HEIGHT,
   },
+
   playerPosition: {
-    x: 0,
-    y: Math.round(GRID_HEIGHT / 2),
+    x: Math.round(VIEWPORT_WIDTH / 2),
+    y: Math.round(VIEWPORT_HEIGHT / 2),
   },
+
   debugSettings: {
     showCoords: false,
   },

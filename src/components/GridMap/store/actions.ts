@@ -11,7 +11,8 @@ import {
   BaseTiles,
 } from "./state";
 import { generateTunnels } from "../helpers/generateTunnels";
-import { getSceneById, padSceneToViewport } from "../scenes/sceneProcessor";
+import { getSceneById, TransitionDefinition } from "../scenes/sceneProcessor";
+import { padSceneToViewport } from "../scenes/padSceneToViewport";
 
 export const useTravelActions = () => {
   const state = useGridMapState();
@@ -73,19 +74,12 @@ export const useTravelActions = () => {
         if (!newLoadedScene)
           throw new Error(`Scene ${sceneParams.sceneId} not found`);
 
-        newLoadedScene = padSceneToViewport(
+        state.currentScene = padSceneToViewport(
           newLoadedScene,
           VIEWPORT_WIDTH,
           VIEWPORT_HEIGHT
         );
 
-        state.currentScene = {
-          sceneType: SceneType.PREMADE,
-          sceneId: sceneParams.sceneId,
-          data: newLoadedScene.data,
-          width: newLoadedScene.width,
-          height: newLoadedScene.height,
-        };
         break;
       }
 
@@ -93,23 +87,55 @@ export const useTravelActions = () => {
         throw new Error(`Unknown scene type`);
     }
 
-    revealAreaAround(
-      state.playerPosition.x,
-      state.playerPosition.y,
-      state.currentScene.data
-    );
+    if (sceneParams.playerPosition) {
+      state.playerPosition = sceneParams.playerPosition;
+    }
 
     state.isInitialized = true;
   };
 
+  const handleCellInteract = (x: number, y: number, transitionId?: string) => {
+    if (transitionId) {
+      const transition = state.currentScene.transitions?.[transitionId];
+
+      console.log("transitionId: ", transitionId);
+
+      console.log(state.currentScene);
+
+      if (!transition) throw new Error("Invalid transition ID");
+
+      const newScene = getSceneById(transition.targetSceneId);
+      if (!newScene) throw new Error("Invalid scene ID");
+
+      initializeScene({
+        sceneType: SceneType.PREMADE,
+        sceneId: transition.targetSceneId,
+        playerPosition: {
+          x: transition.targetX,
+          y: transition.targetY,
+        },
+      });
+    }
+
+    movePlayer(x, y);
+  };
+
   /**
    * Moves the player to a new position if the move is valid.
+   * Reveals area immediately around the player.
    * @param x
    * @param y
    * @returns
    */
-  const movePlayer = (x: number, y: number): void => {
-    if (!isValidMove(x, y, state.playerPosition, state.currentScene.data))
+  const movePlayer = (
+    x: number,
+    y: number,
+    skipValidation: boolean = false
+  ): void => {
+    if (
+      !isValidMove(x, y, state.playerPosition, state.currentScene.data) &&
+      !skipValidation
+    )
       return;
 
     state.currentScene.data = revealAreaAround(x, y, state.currentScene.data);
@@ -127,6 +153,7 @@ export const useTravelActions = () => {
 
   return {
     initializeScene,
+    handleCellInteract,
     movePlayer,
     updateDebugSettings,
   };

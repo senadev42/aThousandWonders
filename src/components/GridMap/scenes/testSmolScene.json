@@ -5,8 +5,21 @@
         "X X X X X X X X",
         "X O O O O O X X",
         "X O O O O O O X",
-        "X O X O O O O X",
-        "X O X O O O O X",
-        "X X X X O X X X"
-    ]
+        "X O O O O O O X",
+        "X O O O O O O X",
+        "X O O O O O O X",
+        "X O O O O O O X",
+        "X O O O O O X X",
+        "X X X X X X X X"
+    ],
+    "transitions": {
+        "down_tavern_smol_to_tavern_1": {
+            "transitionId": "down_tavern_smol_to_tavern_1",
+            "positionX": 4,
+            "positionY": 4,
+            "targetSceneId": "tavern_1",
+            "targetX": 3,
+            "targetY": 3
+        }
+    }
 }

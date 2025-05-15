@@ -1,5 +1,6 @@
 // state.ts
 import { proxy } from "valtio";
+import { TransitionDefinition } from "../scenes/sceneProcessor";
 
 export const VIEWPORT_WIDTH = 15;
 export const VIEWPORT_HEIGHT = 13;
@@ -15,6 +16,7 @@ export enum BaseTiles {
 export type BaseCell = {
   type: BaseTiles;
   revealed: boolean;
+  transitionId?: string;
   feature?: string; // Add this
 };
 
@@ -36,6 +38,7 @@ export type SceneParams = {
   sceneType: SceneType;
   seed?: number;
   sceneId?: string;
+  playerPosition?: GridPosition;
 };
 
 export type Dimensions = {
@@ -43,11 +46,12 @@ export type Dimensions = {
   height: number;
 };
 
-export type Scene = SceneParams &
-  Dimensions & {
-    data: BaseScene;
-    name?: string;
-  };
+export type Scene = {
+  data: BaseScene;
+  name?: string;
+  transitions?: Record<string, TransitionDefinition>;
+} & Dimensions &
+  SceneParams;
 
 export interface GridMapState {
   //scene metadata

@@ -4,10 +4,20 @@ import { BaseCell, BaseTiles, Scene, SceneType } from "../store/state";
 import tavernScene from "./testTavernScene.json";
 import testSmol from "./testSmolScene.json";
 
+export interface TransitionDefinition {
+  transitionId: string;
+  positionX: number;
+  positionY: number;
+  targetSceneId: string;
+  targetX: number;
+  targetY: number;
+}
+
 export interface RawScene {
   id: string;
   name: string;
   layout: string[];
+  transitions?: Record<string, TransitionDefinition>;
   features?: Record<string, string>;
 }
 
@@ -27,8 +37,7 @@ const processScene = (scene: RawScene): Scene => {
 
       row.push({
         type,
-        revealed: false,
-        feature: undefined,
+        revealed: true,
       });
     }
     processedData.push(row);
@@ -44,6 +53,17 @@ const processScene = (scene: RawScene): Scene => {
     });
   }
 
+  if (scene.transitions) {
+    Object.entries(scene.transitions).forEach(([id, transition]) => {
+      const { positionX, positionY } = transition;
+
+      processedData[positionY][positionX].transitionId = id;
+    });
+  }
+
+  console.log("processed transitions: ");
+  console.log(scene.transitions);
+
   return {
     sceneType: SceneType.PREMADE,
     sceneId: scene.id,
@@ -51,47 +71,9 @@ const processScene = (scene: RawScene): Scene => {
     width: processedData[0].length,
     height: processedData.length,
     data: processedData,
+    transitions: scene.transitions || {},
   };
 };
-
-export function padSceneToViewport(
-  scene: Scene,
-  viewportWidth: number,
-  viewportHeight: number
-): Scene {
-  if (scene.width >= viewportWidth && scene.height >= viewportHeight) {
-    return scene;
-  }
-
-  const horizontalPadding = Math.floor((viewportWidth - scene.width) / 2);
-  const verticalPadding = Math.floor((viewportHeight - scene.height) / 2);
-
-  // Create new padded data array
-  const paddedData: BaseCell[][] = Array.from({ length: viewportHeight }, () =>
-    Array.from({ length: viewportWidth }, () => ({
-      type: BaseTiles.WALL,
-      revealed: false,
-    }))
-  );
-
-  // Copy original scene data into center of padded array
-  for (let y = 0; y < scene.height; y++) {
-    for (let x = 0; x < scene.width; x++) {
-      if (scene.data[y]?.[x]) {
-        const newY = y + verticalPadding;
-        const newX = x + horizontalPadding;
-        paddedData[newY][newX] = { ...scene.data[y][x] };
-      }
-    }
-  }
-
-  return {
-    ...scene,
-    width: viewportWidth,
-    height: viewportHeight,
-    data: paddedData,
-  };
-}
 
 export const availableScenes: Record<string, Scene> = {
   tavern_1: processScene(tavernScene),

@@ -11,9 +11,10 @@ import {
 import React, { useRef } from "react";
 import GridDebugMenu from "./GridDebugMenu";
 import { useGridScroll } from "./helpers/useGridScroll";
+import { SquareArrowDown, SquareArrowUp } from "lucide-react";
 
 const GridMapComponent = () => {
-  const { movePlayer, state } = useTravelStore();
+  const { handleCellInteract, state } = useTravelStore();
   const { currentScene, playerPosition, debugSettings } = useSnapshot(state);
 
   const scrollRef = useRef<HTMLDivElement | null>(null);
@@ -84,8 +85,10 @@ const GridMapComponent = () => {
                           y={y}
                           cell={cell}
                           isAdjacent={isCellAdjacent}
-                          cellHash={`${cell.type}-${cell.revealed}-${isCellAdjacent}-${debugSettings.showCoords}`}
-                          onMove={() => movePlayer(x, y)}
+                          cellHash={`${cell.type}-${cell.revealed}-${debugSettings.showCoords}-${cell.transitionId}`}
+                          onInteract={() =>
+                            handleCellInteract(x, y, cell.transitionId)
+                          }
                           debugSettings={debugSettings}
                         />
 
@@ -112,7 +115,7 @@ type MapCellProps = {
   cell: BaseCell;
   isAdjacent: boolean;
   cellHash: string;
-  onMove: () => void;
+  onInteract: () => void;
   debugSettings: {
     showCoords: boolean;
   };
@@ -120,7 +123,7 @@ type MapCellProps = {
 
 const MapCell: React.FC<MapCellProps> = React.memo(
   (props: MapCellProps) => {
-    const { x, y, cell, isAdjacent, onMove, debugSettings } = props;
+    const { x, y, cell, onInteract, debugSettings } = props;
 
     const isWall = cell.type === "wall";
 
@@ -136,16 +139,27 @@ const MapCell: React.FC<MapCellProps> = React.memo(
 
     return (
       <div
-        className={`w-full h-full flex items-center justify-center 
-          hover:brightness-105
-          ${isAdjacent ? "cursor-pointer hover:brightness-125" : ""}
-          ${opacityClass}
-        `}
-        onClick={isAdjacent ? onMove : undefined}
+        className={`w-full h-full flex items-center justify-center hover:brightness-134 ${opacityClass}`}
+        onClick={onInteract}
       >
         {!isWall && debugSettings.showCoords && (
           <span className="absolute inset-0 flex items-center justify-center z-10 text-[0.6rem] opacity-50">
             {x},{y}
+          </span>
+        )}
+
+        {cell.transitionId && (
+          <span className="absolute inset-0 flex items-center justify-center z-10 text-[0.6rem] opacity-50">
+            <div
+              className="  w-6 h-6 rounded-md transition-all duration-75 ease-out
+            animate-player-move"
+            >
+              {cell.transitionId.startsWith("down") ? (
+                <SquareArrowDown />
+              ) : (
+                <SquareArrowUp />
+              )}
+            </div>
           </span>
         )}
       </div>

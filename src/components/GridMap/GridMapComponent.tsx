@@ -31,11 +31,17 @@ const GridMapComponent = () => {
     endY: 0,
   };
 
+  const centerOnXPlane =
+    currentScene.width < VIEWPORT_WIDTH ? "justify-center" : "";
+
+  const centerOnYPlane =
+    currentScene.height < VIEWPORT_HEIGHT ? "items-center" : "";
+
   return (
-    <div className="flex flex-col gap-2 items-center justify-start w-full mt-10">
+    <div className="flex flex-col gap-2 items-center justify-start w-full mt-10 ">
       <div
         ref={scrollRef}
-        className="border-4 border-black rounded bg-gray-900 overflow-auto flex scrollbar-none"
+        className={`border-4 border-black rounded bg-gray-900 overflow-auto flex ${centerOnXPlane} ${centerOnYPlane} scrollbar-none`}
         style={{
           width: `${VIEWPORT_WIDTH * CELL_SIZE + 8}px`,
           height: `${VIEWPORT_HEIGHT * CELL_SIZE + 8}px`,
@@ -131,7 +137,7 @@ const MapCell: React.FC<MapCellProps> = React.memo(
     const revealedColorClass = "bg-gray-600";
     const hiddenColorClass = "bg-gray-800";
 
-    const opacityClass = isWall
+    const bgColorClass = isWall
       ? wallColorClass
       : cell.revealed
       ? revealedColorClass
@@ -139,7 +145,7 @@ const MapCell: React.FC<MapCellProps> = React.memo(
 
     return (
       <div
-        className={`w-full h-full flex items-center justify-center hover:brightness-134 ${opacityClass}`}
+        className={`w-full h-full flex items-center justify-center hover:brightness-134 ${bgColorClass}`}
         onClick={onInteract}
       >
         {!isWall && debugSettings.showCoords && (
@@ -149,17 +155,12 @@ const MapCell: React.FC<MapCellProps> = React.memo(
         )}
 
         {cell.transitionId && (
-          <span className="absolute inset-0 flex items-center justify-center z-10 text-[0.6rem] opacity-50">
-            <div
-              className="  w-6 h-6 rounded-md transition-all duration-75 ease-out
-            animate-player-move"
-            >
-              {cell.transitionId.startsWith("down") ? (
-                <SquareArrowDown />
-              ) : (
-                <SquareArrowUp />
-              )}
-            </div>
+          <span className="absolute inset-0 flex items-center justify-center z-10 text-[0.6rem] opacity-60 text-white">
+            {cell.transitionId.startsWith("down") ? (
+              <SquareArrowDown />
+            ) : (
+              <SquareArrowUp />
+            )}
           </span>
         )}
       </div>

@@ -61,9 +61,6 @@ const processScene = (scene: RawScene): Scene => {
     });
   }
 
-  console.log("processed transitions: ");
-  console.log(scene.transitions);
-
   return {
     sceneType: SceneType.PREMADE,
     sceneId: scene.id,

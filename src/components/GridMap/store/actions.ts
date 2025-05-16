@@ -74,11 +74,13 @@ export const useTravelActions = () => {
         if (!newLoadedScene)
           throw new Error(`Scene ${sceneParams.sceneId} not found`);
 
-        state.currentScene = padSceneToViewport(
-          newLoadedScene,
-          VIEWPORT_WIDTH,
-          VIEWPORT_HEIGHT
-        );
+        // newLoadedScene = padSceneToViewport(
+        //   newLoadedScene,
+        //   VIEWPORT_WIDTH,
+        //   VIEWPORT_HEIGHT
+        // );
+
+        state.currentScene = newLoadedScene;
 
         break;
       }
@@ -100,7 +102,7 @@ export const useTravelActions = () => {
 
       console.log("transitionId: ", transitionId);
 
-      console.log(state.currentScene);
+      console.log(state.currentScene.transitions);
 
       if (!transition) throw new Error("Invalid transition ID");
 
@@ -115,9 +117,7 @@ export const useTravelActions = () => {
           y: transition.targetY,
         },
       });
-    }
-
-    movePlayer(x, y);
+    } else movePlayer(x, y);
   };
 
   /**

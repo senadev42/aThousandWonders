@@ -6,6 +6,7 @@ import testSmol from "./testSmolScene.json";
 
 export interface TransitionDefinition {
   transitionId: string;
+  transitionType: string;
   positionX: number;
   positionY: number;
   targetSceneId: string;
@@ -17,7 +18,7 @@ export interface RawScene {
   id: string;
   name: string;
   layout: string[];
-  transitions?: Record<string, TransitionDefinition>;
+  transitions?: TransitionDefinition[];
   features?: Record<string, string>;
 }
 
@@ -53,12 +54,28 @@ const processScene = (scene: RawScene): Scene => {
     });
   }
 
+  let transitions: Record<string, TransitionDefinition> = {};
   if (scene.transitions) {
-    Object.entries(scene.transitions).forEach(([id, transition]) => {
+    scene.transitions.forEach((transition) => {
       const { positionX, positionY } = transition;
 
-      processedData[positionY][positionX].transitionId = id;
+      processedData[positionY][positionX].transitionId =
+        transition.transitionId;
     });
+
+    transitions = scene.transitions.reduce(
+      (acc: Record<string, TransitionDefinition>, transition) => {
+        acc[transition.transitionId] = transition;
+
+        const { positionX: x, positionY: y } = transition;
+
+        processedData[y][x].transitionId = transition.transitionId;
+        processedData[y][x].feature = transition.transitionType;
+
+        return acc;
+      },
+      {}
+    );
   }
 
   return {
@@ -68,13 +85,13 @@ const processScene = (scene: RawScene): Scene => {
     width: processedData[0].length,
     height: processedData.length,
     data: processedData,
-    transitions: scene.transitions || {},
+    transitions: transitions,
   };
 };
 
 export const availableScenes: Record<string, Scene> = {
-  tavern_1: processScene(tavernScene),
-  tavern_smol: processScene(testSmol),
+  tavern1: processScene(tavernScene),
+  tavernSmol: processScene(testSmol),
 };
 
 export const getSceneById = (id: string): Scene => {

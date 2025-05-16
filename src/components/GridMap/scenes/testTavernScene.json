@@ -1,29 +1,30 @@
 {
-    "id": "tavern_1",
+    "id": "tavern1",
     "name": "Test Scene Tavern",
     "layout": [
         "X X X X X X X X X X X X X X X",
-        "X O O O O O X O O O O O O O X",
-        "X O O O O O O O O O O O O O X",
-        "X O O O O O X O O O O O O O X",
-        "X O O O O O X X X X X X X X X",
-        "X O O O O O X O O O O O O O X",
-        "X X X X O X X O O O O O O O X",
-        "X O O O O O O O O O O O O O X",
+        "X X X X X X X O O O O O O O X",
+        "X X X X X X X O O O O O O O X",
+        "X X X X X X X X X X X X X X X",
+        "X X X X X X X O O O O O O O X",
+        "X X X X X X X O O O O O O O X",
         "X O O O O O O O O O O O O O X",
         "X O O O O O O O O O O O O O X",
         "X O O O O O O O O O O O O O X",
-        "X O O O O O O O O O O O O O X",
+        "X O X O O O O O O O O O O O X",
+        "X O X O O O O O O O O O O O X",
+        "X X X X X X O O O X X X X X X",
         "X X X X X X X X X X X X X X X"
     ],
-    "transitions": {
-        "up_tavern_smol_to_tavern_1": {
-            "transitionId": "up_tavern_smol_to_tavern_1",
-            "positionX": 3,
-            "positionY": 3,
-            "targetSceneId": "tavern_smol",
+    "transitions": [
+        {
+            "transitionId": "tavern1_to_tavernSmol",
+            "transitionType": "cieling-up",
+            "positionX": 4,
+            "positionY": 5,
+            "targetSceneId": "tavernSmol",
             "targetX": 3,
             "targetY": 4
         }
-    }
+    ]
 }

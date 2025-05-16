@@ -11,7 +11,7 @@ import {
 import React, { useRef } from "react";
 import GridDebugMenu from "./GridDebugMenu";
 import { useGridScroll } from "./helpers/useGridScroll";
-import { SquareArrowDown, SquareArrowUp } from "lucide-react";
+import { getFeatureIcon } from "./scenes/getTransitionIcon";
 
 const GridMapComponent = () => {
   const { handleCellInteract, state } = useTravelStore();
@@ -38,10 +38,10 @@ const GridMapComponent = () => {
     currentScene.height < VIEWPORT_HEIGHT ? "items-center" : "";
 
   return (
-    <div className="flex flex-col gap-2 items-center justify-start w-full mt-10 ">
+    <div className="flex flex-col gap-2 items-center justify-start w-full mt-10">
       <div
         ref={scrollRef}
-        className={`border-4 border-black rounded bg-gray-900 overflow-auto flex ${centerOnXPlane} ${centerOnYPlane} scrollbar-none`}
+        className={`border-4 border-black rounded bg-gray-900 overflow-auto flex ${centerOnXPlane} ${centerOnYPlane} scrollbar-custom `}
         style={{
           width: `${VIEWPORT_WIDTH * CELL_SIZE + 8}px`,
           height: `${VIEWPORT_HEIGHT * CELL_SIZE + 8}px`,
@@ -155,12 +155,9 @@ const MapCell: React.FC<MapCellProps> = React.memo(
         )}
 
         {cell.transitionId && (
-          <span className="absolute inset-0 flex items-center justify-center z-10 text-[0.6rem] opacity-60 text-white">
-            {cell.transitionId.startsWith("down") ? (
-              <SquareArrowDown />
-            ) : (
-              <SquareArrowUp />
-            )}
+          <span className="absolute inset-0 flex items-center justify-center z-10 text-[0.6rem] opacity-50 bg-gray-700">
+            {cell.feature &&
+              React.createElement(getFeatureIcon(cell.feature) as React.FC)}
           </span>
         )}
       </div>

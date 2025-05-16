@@ -1,25 +1,25 @@
 {
-    "id": "tavern_smol",
+    "id": "tavernSmol",
     "name": "Test Smol Scene 1",
     "layout": [
-        "X X X X X X X X",
-        "X O O O O O X X",
-        "X O O O O O O X",
-        "X O O O O O O X",
-        "X O O O O O O X",
-        "X O O O O O O X",
-        "X O O O O O O X",
-        "X O O O O O X X",
-        "X X X X X X X X"
+        "X X X X X X X",
+        "X O O O O O X",
+        "X O O O O O X",
+        "X O O O O O X",
+        "X O O O O O X",
+        "X O O O O O X",
+        "X X X O X X X",
+        "X X X X X X X"
     ],
-    "transitions": {
-        "down_tavern_smol_to_tavern_1": {
-            "transitionId": "down_tavern_smol_to_tavern_1",
-            "positionX": 4,
-            "positionY": 4,
-            "targetSceneId": "tavern_1",
-            "targetX": 3,
-            "targetY": 3
+    "transitions": [
+        {
+            "transitionId": "tavernSmol_to_tavern1",
+            "transitionType": "floor-down",
+            "positionX": 3,
+            "positionY": 6,
+            "targetSceneId": "tavern1",
+            "targetX": 4,
+            "targetY": 5
         }
-    }
+    ]
 }

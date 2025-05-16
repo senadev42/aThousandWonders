@@ -75,12 +75,6 @@ export const useTravelActions = () => {
         if (!newLoadedScene)
           throw new Error(`Scene ${sceneParams.sceneId} not found`);
 
-        // newLoadedScene = padSceneToViewport(
-        //   newLoadedScene,
-        //   VIEWPORT_WIDTH,
-        //   VIEWPORT_HEIGHT
-        // );
-
         state.currentScene = newLoadedScene;
 
         break;

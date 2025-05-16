@@ -1,6 +1,11 @@
 import { Scene, BaseCell, BaseTiles } from "../store/state";
 import { TransitionDefinition } from "./sceneProcessor";
 
+/**
+ * Pads the scene to fit the viewport dimensions by adding walls around the original scene.
+ * @deprecated in favor of just conditionally centering it, this deeply deeply messes up the transition coord system
+ * @returns
+ */
 export function padSceneToViewport(
   scene: Scene,
   viewportWidth: number,

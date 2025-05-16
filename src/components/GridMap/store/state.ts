@@ -29,7 +29,8 @@ export type GridPosition = {
 
 //Scene Types
 export enum SceneType {
-  RANDOM = "random",
+  MAZE = "maze",
+  DUNGEON = "dungeon",
   EMPTY = "empty",
   PREMADE = "premade",
 }

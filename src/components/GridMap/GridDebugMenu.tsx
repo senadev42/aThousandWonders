@@ -13,14 +13,14 @@ const GridDebugMenu = () => {
   );
   const [seed, setSeed] = useState<string>("");
   const [sceneId, setSceneId] = useState<string>(
-    state.currentScene.sceneId || ""
+    Object.keys(availableScenes)[0]
   );
 
   const handleSceneSelect = () => {
     switch (selectedType) {
-      case SceneType.RANDOM:
+      case SceneType.MAZE:
         initializeScene({
-          sceneType: SceneType.RANDOM,
+          sceneType: SceneType.MAZE,
           seed: seed ? parseInt(seed) : Math.floor(Math.random() * 10000),
         });
         break;
@@ -33,6 +33,12 @@ const GridDebugMenu = () => {
         initializeScene({
           sceneType: SceneType.PREMADE,
           sceneId: sceneId,
+        });
+        break;
+      case SceneType.DUNGEON:
+        initializeScene({
+          sceneType: SceneType.DUNGEON,
+          seed: seed ? parseInt(seed) : Math.floor(Math.random() * 10000),
         });
         break;
     }
@@ -71,8 +77,9 @@ const GridDebugMenu = () => {
                 onChange={(e) => setSelectedType(e.target.value as SceneType)}
               >
                 <option value={SceneType.EMPTY}>Empty Map</option>
-                <option value={SceneType.RANDOM}>Random Map</option>
+                <option value={SceneType.MAZE}>Random Map</option>
                 <option value={SceneType.PREMADE}>Premade Map</option>
+                <option value={SceneType.DUNGEON}>Dungeon Map</option>
               </select>
               <button
                 className="bg-slate-500 text-white text-xs p-1 rounded disabled:cursor-not-allowed flex-1"
@@ -83,7 +90,8 @@ const GridDebugMenu = () => {
               </button>
             </div>
 
-            {selectedType === SceneType.RANDOM && (
+            {(selectedType === SceneType.MAZE ||
+              selectedType === SceneType.DUNGEON) && (
               <div className="flex gap-2">
                 <input
                   type="number"

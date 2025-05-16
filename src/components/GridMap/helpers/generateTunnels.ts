@@ -63,14 +63,6 @@ export const generateTunnels = (
   ];
   const visited = new Set();
 
-  // carve a tunnel between them
-  for (let x = startX; x <= endX; x++) {
-    newBaseScene[startY][x] = {
-      type: BaseTiles.FLOOR,
-      revealed: false,
-    };
-  }
-
   // Main tunnel generation
   while (stack.length > 0) {
     const [currentX, currentY] = stack[stack.length - 1];
@@ -96,13 +88,6 @@ export const generateTunnels = (
     } else {
       stack.pop();
     }
-  }
-
-  //Illuminate the known path forward,
-  let currentX = startX - 1;
-  while (currentX < endX) {
-    currentX++;
-    newBaseScene[startY][currentX].revealed = true;
   }
 
   return newBaseScene;

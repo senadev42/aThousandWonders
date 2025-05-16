@@ -13,6 +13,7 @@ import {
 import { generateTunnels } from "../helpers/generateTunnels";
 import { getSceneById, TransitionDefinition } from "../scenes/sceneProcessor";
 import { padSceneToViewport } from "../scenes/padSceneToViewport";
+import { generateRoomDungeon } from "../helpers/generateDungeons";
 
 export const useTravelActions = () => {
   const state = useGridMapState();
@@ -25,7 +26,7 @@ export const useTravelActions = () => {
     state.isInitialized = false;
 
     switch (sceneParams.sceneType) {
-      case SceneType.RANDOM:
+      case SceneType.MAZE:
         if (!sceneParams.seed)
           throw new Error("Seed is required for random scene generation");
 
@@ -41,7 +42,7 @@ export const useTravelActions = () => {
         );
 
         state.currentScene = {
-          sceneType: SceneType.RANDOM,
+          sceneType: SceneType.MAZE,
           seed: sceneParams.seed,
           data: newRandomScene,
           width: VIEWPORT_WIDTH,
@@ -81,6 +82,30 @@ export const useTravelActions = () => {
         // );
 
         state.currentScene = newLoadedScene;
+
+        break;
+      }
+
+      case SceneType.DUNGEON: {
+        if (!sceneParams.seed)
+          throw new Error("Seed is required for random scene generation");
+
+        const width = VIEWPORT_WIDTH;
+        const height = VIEWPORT_HEIGHT;
+
+        const newDungeonScene: BaseScene = generateRoomDungeon(
+          width,
+          height,
+          sceneParams.seed
+        );
+
+        state.currentScene = {
+          sceneType: SceneType.MAZE,
+          seed: sceneParams.seed,
+          data: newDungeonScene,
+          width: width,
+          height: height,
+        };
 
         break;
       }

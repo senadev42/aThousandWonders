@@ -3,6 +3,7 @@ import { useSnapshot } from "valtio";
 import { useTravelStore } from "./store";
 import GridMapComponent from "./GridMapComponent";
 import { SceneType } from "./store/state";
+import GridDebugMenu from "./GridDebugMenu";
 
 const TraversalInterface = () => {
   const { state, initializeScene } = useTravelStore();
@@ -29,7 +30,12 @@ const TraversalInterface = () => {
     );
   }
 
-  return <GridMapComponent />;
+  return (
+    <div className="flex flex-col gap-2 items-center justify-start w-full mt-10">
+      <GridMapComponent />
+      <GridDebugMenu />
+    </div>
+  );
 };
 
 // Grid Component

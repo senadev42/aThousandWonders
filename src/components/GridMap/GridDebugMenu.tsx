@@ -53,6 +53,7 @@ const GridDebugMenu = () => {
 
         <div className="mt-2 flex items-center  ">
           <input
+            checked={debugInfo.showCoords}
             type="checkbox"
             className="mr-2 size-3"
             onChange={(e) => {
@@ -62,6 +63,21 @@ const GridDebugMenu = () => {
             }}
           />
           <span>Show Coords</span>
+        </div>
+
+        <div className="mt-2 flex items-center  ">
+          <input
+            disabled
+            checked={debugInfo.showScollbar}
+            type="checkbox"
+            className="mr-2 size-3"
+            onChange={(e) => {
+              updateDebugSettings({
+                showScollbar: e.target.checked,
+              });
+            }}
+          />
+          <span>Show Scrollbar When Overflow</span>
         </div>
       </div>
 

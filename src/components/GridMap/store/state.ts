@@ -5,7 +5,7 @@ import { TransitionDefinition } from "../scenes/sceneProcessor";
 export const VIEWPORT_WIDTH = 15;
 export const VIEWPORT_HEIGHT = 13;
 
-export const CELL_SIZE = 35;
+export const CELL_SIZE = 30;
 
 //Base Scene Types
 export enum BaseTiles {
@@ -54,6 +54,12 @@ export type Scene = {
 } & Dimensions &
   SceneParams;
 
+//debug
+export type DebugSettings = {
+  showCoords: boolean;
+  showScollbar: boolean;
+};
+
 export interface GridMapState {
   //scene metadata
   isInitialized: boolean;
@@ -63,13 +69,10 @@ export interface GridMapState {
 
   //entity data
   playerPosition: GridPosition;
-
-  debugSettings: {
-    showCoords: boolean;
-  };
+  debugSettings: DebugSettings;
 
   //getters
-  debugInfo: {
+  debugInfo: DebugSettings & {
     playerPosition: string;
     seed: number;
   };
@@ -95,12 +98,14 @@ export const gridMapState = proxy<GridMapState>({
 
   debugSettings: {
     showCoords: false,
+    showScollbar: true,
   },
 
   get debugInfo() {
     return {
       playerPosition: `X: ${this.playerPosition.x} Y: ${this.playerPosition.y}`,
       seed: this.currentScene.seed || 0,
+      ...this.debugSettings,
     };
   },
 });

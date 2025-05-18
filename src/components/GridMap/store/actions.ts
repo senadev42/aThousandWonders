@@ -11,8 +11,7 @@ import {
   BaseTiles,
 } from "./state";
 import { generateTunnels } from "../helpers/generateTunnels";
-import { getSceneById, TransitionDefinition } from "../scenes/sceneProcessor";
-import { padSceneToViewport } from "../scenes/padSceneToViewport";
+import { getSceneById } from "../scenes/sceneProcessor";
 import { generateRoomDungeon } from "../helpers/generateDungeons";
 
 export const useTravelActions = () => {

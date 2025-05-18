@@ -9,6 +9,7 @@ import {
   VIEWPORT_WIDTH,
   VIEWPORT_HEIGHT,
   BaseTiles,
+  CELL_SIZE,
 } from "./state";
 import { generateTunnels } from "../helpers/generateTunnels";
 import { getSceneById } from "../scenes/sceneProcessor";
@@ -18,15 +19,15 @@ export const useTravelActions = () => {
   const state = useGridMapState();
 
   /**
-   * Accepts a sceneParams object and initializes the scene based on the type.
-   * @param sceneParams
+   * Accepts a initSceneparams object and initializes the scene based on the type.
+   * @param initSceneparams
    */
-  const initializeScene = (sceneParams: SceneParams) => {
+  const initializeScene = (initSceneparams: SceneParams) => {
     state.isInitialized = false;
 
-    switch (sceneParams.sceneType) {
+    switch (initSceneparams.sceneType) {
       case SceneType.MAZE:
-        if (!sceneParams.seed)
+        if (!initSceneparams.seed)
           throw new Error("Seed is required for random scene generation");
 
         const startY = Math.floor(VIEWPORT_HEIGHT / 2);
@@ -37,16 +38,37 @@ export const useTravelActions = () => {
           startY,
           VIEWPORT_WIDTH - 1,
           endY,
-          sceneParams.seed
+          initSceneparams.seed
         );
 
         state.currentScene = {
           sceneType: SceneType.MAZE,
-          seed: sceneParams.seed,
+          seed: initSceneparams.seed,
           data: newRandomScene,
           width: VIEWPORT_WIDTH,
           height: VIEWPORT_HEIGHT,
         };
+
+        //pick a random floor position and put the player there
+        const randomFloorPos = newRandomScene
+          .flatMap((row, y) =>
+            row.map((cell, x) =>
+              cell.type === BaseTiles.FLOOR ? { x, y } : null
+            )
+          )
+          .filter(Boolean);
+
+        state.playerPosition =
+          initSceneparams.initPosition ??
+          (randomFloorPos[
+            Math.floor(Math.random() * randomFloorPos.length)
+          ] as GridPosition);
+
+        state.currentScene.data = revealAreaAround(
+          state.playerPosition.x,
+          state.playerPosition.y,
+          state.currentScene.data
+        );
 
         break;
 
@@ -65,22 +87,36 @@ export const useTravelActions = () => {
           height: VIEWPORT_HEIGHT,
         };
 
+        //put the player in the middle
+        state.playerPosition = initSceneparams.initPosition ?? {
+          x: Math.floor(VIEWPORT_WIDTH / 2),
+          y: Math.floor(VIEWPORT_HEIGHT / 2),
+        };
+
         break;
 
       case SceneType.PREMADE: {
-        if (!sceneParams.sceneId) throw new Error("Scene ID required");
+        if (!initSceneparams.sceneId) throw new Error("Scene ID required");
 
-        let newLoadedScene = getSceneById(sceneParams.sceneId);
+        let newLoadedScene = getSceneById(initSceneparams.sceneId);
         if (!newLoadedScene)
-          throw new Error(`Scene ${sceneParams.sceneId} not found`);
+          throw new Error(`Scene ${initSceneparams.sceneId} not found`);
 
         state.currentScene = newLoadedScene;
+
+        //put the player in the scene's initPosition, and if one doesn't exist on a random floor area
+        state.playerPosition = initSceneparams.initPosition ??
+          newLoadedScene.initPosition ??
+          newLoadedScene.initPosition ?? {
+            x: Math.floor(VIEWPORT_WIDTH / 2),
+            y: Math.floor(VIEWPORT_HEIGHT / 2),
+          };
 
         break;
       }
 
       case SceneType.DUNGEON: {
-        if (!sceneParams.seed)
+        if (!initSceneparams.seed)
           throw new Error("Seed is required for random scene generation");
 
         const width = VIEWPORT_WIDTH;
@@ -89,12 +125,12 @@ export const useTravelActions = () => {
         const newDungeonScene: BaseScene = generateRoomDungeon(
           width,
           height,
-          sceneParams.seed
+          initSceneparams.seed
         );
 
         state.currentScene = {
           sceneType: SceneType.MAZE,
-          seed: sceneParams.seed,
+          seed: initSceneparams.seed,
           data: newDungeonScene,
           width: width,
           height: height,
@@ -107,20 +143,19 @@ export const useTravelActions = () => {
         throw new Error(`Unknown scene type`);
     }
 
-    if (sceneParams.playerPosition) {
-      state.playerPosition = sceneParams.playerPosition;
-    }
+    //
 
     state.isInitialized = true;
   };
 
-  const handleCellInteract = (x: number, y: number, transitionId?: string) => {
+  const handleCellInteract = (
+    x: number,
+    y: number,
+    transitionId?: string,
+    event?: React.MouseEvent<HTMLDivElement, MouseEvent>
+  ) => {
     if (transitionId) {
       const transition = state.currentScene.transitions?.[transitionId];
-
-      console.log("transitionId: ", transitionId);
-
-      console.log(state.currentScene.transitions);
 
       if (!transition) throw new Error("Invalid transition ID");
 
@@ -130,12 +165,11 @@ export const useTravelActions = () => {
       initializeScene({
         sceneType: SceneType.PREMADE,
         sceneId: transition.targetSceneId,
-        playerPosition: {
-          x: transition.targetX,
-          y: transition.targetY,
-        },
+        initPosition: transition.target,
       });
-    } else movePlayer(x, y);
+    } else {
+      movePlayer(x, y);
+    }
   };
 
   /**
@@ -157,6 +191,7 @@ export const useTravelActions = () => {
       return;
 
     state.currentScene.data = revealAreaAround(x, y, state.currentScene.data);
+
     state.playerPosition = { x, y };
   };
 

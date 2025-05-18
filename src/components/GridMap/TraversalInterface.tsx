@@ -13,11 +13,7 @@ const TraversalInterface = () => {
     if (!isInitialized) {
       initializeScene({
         sceneType: SceneType.PREMADE,
-        sceneId: "tavern1",
-        playerPosition: {
-          x: 4,
-          y: 7,
-        },
+        sceneId: "testGuest",
       });
     }
   }, []);

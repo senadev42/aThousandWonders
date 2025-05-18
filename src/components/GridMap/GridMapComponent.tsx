@@ -5,24 +5,28 @@ import {
   BaseCell,
   BaseTiles,
   CELL_SIZE,
+  DebugInfo,
   VIEWPORT_HEIGHT,
   VIEWPORT_WIDTH,
 } from "./store/state";
 import React, { useRef } from "react";
 import { getFeatureIcon } from "./scenes/getTransitionIcon";
+import { resolveBackgroundImage } from "./scenes/resolveBackgroundImage";
 
 const GridMapComponent = () => {
   const { handleCellInteract, state } = useTravelStore();
-  const { currentScene, debugSettings } = useSnapshot(state);
+  const { currentScene, debugInfo } = useSnapshot(state);
 
   const scrollRef = useRef<HTMLDivElement | null>(null);
 
-  const borderStyle = "border-[0.5px] border-slate-800 border-opacity-4";
+  const backgroundImage = resolveBackgroundImage(currentScene.background);
+
+  const borderStyle = backgroundImage
+    ? " "
+    : "border-[0.5px] border-slate-900 border-opacity-1";
 
   const gridCells = currentScene.data.map((row, y) => {
     return row.map((cell, x) => {
-      if (cell.type === BaseTiles.WALL && !cell.feature) return null;
-
       return (
         <div
           key={`${x}-${y}`}
@@ -35,9 +39,11 @@ const GridMapComponent = () => {
           <MapCell
             coordString={`${x},${y}`}
             cell={cell}
-            cellHash={`${cell.type}-${cell.revealed}-${debugSettings.showCoords}-${cell.feature}`}
-            onInteract={() => handleCellInteract(x, y, cell.transitionId)}
-            debugSettings={debugSettings}
+            cellHash={`${cell.type}-${cell.revealed}-${debugInfo.showCoords}-${cell.feature}-${debugInfo.isUsingBgImage}`}
+            onInteract={(event) =>
+              handleCellInteract(x, y, cell.transitionId, event)
+            }
+            debugInfo={debugInfo}
           />
         </div>
       );
@@ -50,7 +56,7 @@ const GridMapComponent = () => {
   const centerOnYPlane =
     currentScene.height < VIEWPORT_HEIGHT ? "items-center" : "";
 
-  const scrollbarcustomClass = debugSettings.showScollbar
+  const scrollbarcustomClass = debugInfo.showScollbar
     ? "scrollbar-custom"
     : "scrollbar-none";
 
@@ -71,6 +77,7 @@ const GridMapComponent = () => {
             gridAutoRows: `${CELL_SIZE}px`,
             width: `${currentScene.width * CELL_SIZE}px`,
             height: `${currentScene.height * CELL_SIZE}px`,
+            ...backgroundImage,
           }}
         >
           <Player />
@@ -88,27 +95,28 @@ type MapCellProps = {
   coordString: string;
   cell: BaseCell;
   cellHash: string;
-  onInteract: () => void;
-  debugSettings: {
-    showCoords: boolean;
-  };
+  onInteract: (event: React.MouseEvent<HTMLDivElement, MouseEvent>) => void;
+  debugInfo: DebugInfo;
 };
 
 const MapCell: React.FC<MapCellProps> = React.memo(
   (props: MapCellProps) => {
-    const { coordString, cell, onInteract, debugSettings } = props;
+    const { coordString, cell, onInteract, debugInfo } = props;
 
-    const revealedColorClass = "bg-gray-600";
-    const hiddenColorClass = "bg-gray-800";
+    let bgColor;
 
-    const bgColorClass = cell.revealed ? revealedColorClass : hiddenColorClass;
+    if (cell.type === BaseTiles.WALL) bgColor = "bg-gray-900";
+    else if (cell.type === BaseTiles.FLOOR) {
+      if (debugInfo.isUsingBgImage) bgColor = "bg-transparent";
+      else if (cell.revealed) bgColor = "bg-gray-600";
+    }
 
     return (
       <div
-        className={`w-full h-full flex items-center justify-center hover:brightness-134 ${bgColorClass}`}
-        onClick={onInteract}
+        className={`w-full h-full flex items-center justify-center hover:brightness-134 ${bgColor}`}
+        onClick={(event) => onInteract(event)}
       >
-        {debugSettings.showCoords && (
+        {debugInfo.showCoords && (
           <span className="absolute inset-0 flex items-center justify-center z-10 text-[0.6rem] opacity-50">
             {coordString}
           </span>
@@ -135,7 +143,7 @@ const Player: React.FC = () => {
 
   return (
     <div
-      className="absolute z-10"
+      className="absolute z-100"
       style={{
         left: playerPosition.x * CELL_SIZE,
         top: playerPosition.y * CELL_SIZE,
@@ -144,7 +152,7 @@ const Player: React.FC = () => {
       }}
     >
       <div className="w-full h-full flex items-center justify-center z-10">
-        <div className="bg-slate-300 w-6 h-6 rounded-full animate-player-move" />
+        <div className="bg-slate-700 border-2 border-black size-7 rounded-full animate-player-move" />
       </div>
     </div>
   );

@@ -1,11 +1,12 @@
 // state.ts
 import { proxy } from "valtio";
-import { TransitionDefinition } from "../scenes/sceneProcessor";
+import { TransitionDefinition } from "../scenes/types";
+import { SceneBackground } from "../scenes/resolveBackgroundImage";
 
-export const VIEWPORT_WIDTH = 15;
-export const VIEWPORT_HEIGHT = 13;
+export const VIEWPORT_WIDTH = 13;
+export const VIEWPORT_HEIGHT = 10;
 
-export const CELL_SIZE = 30;
+export const CELL_SIZE = 45;
 
 //Base Scene Types
 export enum BaseTiles {
@@ -39,7 +40,7 @@ export type SceneParams = {
   sceneType: SceneType;
   seed?: number;
   sceneId?: string;
-  playerPosition?: GridPosition;
+  initPosition?: GridPosition;
 };
 
 export type Dimensions = {
@@ -49,10 +50,15 @@ export type Dimensions = {
 
 export type Scene = {
   data: BaseScene;
+  background?: SceneBackground;
   name?: string;
   transitions?: Record<string, TransitionDefinition>;
 } & Dimensions &
   SceneParams;
+
+export interface ProcessedScenes {
+  [key: string]: Scene;
+}
 
 //debug
 export type DebugSettings = {
@@ -60,22 +66,26 @@ export type DebugSettings = {
   showScollbar: boolean;
 };
 
+export type DebugInfo = {
+  playerPosition: string;
+  seed: number;
+  isUsingBgImage: boolean;
+} & DebugSettings;
+
 export interface GridMapState {
   //scene metadata
   isInitialized: boolean;
 
   //scene content
   currentScene: Scene;
+  processedScenes: ProcessedScenes;
 
   //entity data
   playerPosition: GridPosition;
   debugSettings: DebugSettings;
 
   //getters
-  debugInfo: DebugSettings & {
-    playerPosition: string;
-    seed: number;
-  };
+  debugInfo: DebugInfo;
 }
 
 export const gridMapState = proxy<GridMapState>({
@@ -90,6 +100,7 @@ export const gridMapState = proxy<GridMapState>({
     width: VIEWPORT_WIDTH,
     height: VIEWPORT_HEIGHT,
   },
+  processedScenes: {},
 
   playerPosition: {
     x: Math.round(VIEWPORT_WIDTH / 2),
@@ -105,6 +116,7 @@ export const gridMapState = proxy<GridMapState>({
     return {
       playerPosition: `X: ${this.playerPosition.x} Y: ${this.playerPosition.y}`,
       seed: this.currentScene.seed || 0,
+      isUsingBgImage: !!this.currentScene.background,
       ...this.debugSettings,
     };
   },

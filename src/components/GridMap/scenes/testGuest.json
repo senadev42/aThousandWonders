@@ -1,0 +1,33 @@
+{
+    "id": "testGuest",
+    "name": "Test Guest",
+    "initPosition": {
+        "x": 6,
+        "y": 3
+    },
+    "layout": [
+        "X X X X X X X X X X X X X",
+        "X O O O O O O O O O O O X",
+        "X O O O O O O O O O O O X",
+        "X O O O O O O O O O O O X",
+        "X O O O O O O O O O O O X",
+        "X O O O O O O O O O O O X",
+        "X X X X X X X X X X X X X"
+    ],
+    "transitions": [
+        {
+            "transitionId": "testMesshall_to_testGuest",
+            "transitionType": "scene-left",
+            "position": {
+                "x": 0,
+                "y": 3
+            },
+            "positionY": 6,
+            "targetSceneId": "testMesshall",
+            "target": {
+                "x": 11,
+                "y": 3
+            }
+        }
+    ]
+}

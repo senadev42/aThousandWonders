@@ -1,6 +1,10 @@
 {
     "id": "tavernSmol",
     "name": "Test Smol Scene 1",
+    "initPosition": {
+        "x": 3,
+        "y": 4
+    },
     "layout": [
         "X X X X X X X",
         "X O O O O O X",
@@ -15,11 +19,16 @@
         {
             "transitionId": "tavernSmol_to_tavern1",
             "transitionType": "floor-down",
-            "positionX": 3,
+            "position": {
+                "x": 3,
+                "y": 6
+            },
             "positionY": 6,
             "targetSceneId": "tavern1",
-            "targetX": 4,
-            "targetY": 5
+            "target": {
+                "x": 4,
+                "y": 5
+            }
         }
     ]
 }

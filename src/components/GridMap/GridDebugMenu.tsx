@@ -2,19 +2,18 @@ import { useSnapshot } from "valtio";
 import { useTravelStore } from "./store";
 import { SceneType } from "./store/state";
 import { useState } from "react";
-import { availableScenes } from "./scenes/sceneProcessor";
+import { getAvailableScenes } from "./scenes/sceneProcessor";
 
 const GridDebugMenu = () => {
   const { state, initializeScene, updateDebugSettings } = useTravelStore();
   const { debugInfo } = useSnapshot(state);
+  const availableScenes = getAvailableScenes();
 
   const [selectedType, setSelectedType] = useState<SceneType>(
     state.currentScene.sceneType
   );
   const [seed, setSeed] = useState<string>("");
-  const [sceneId, setSceneId] = useState<string>(
-    Object.keys(availableScenes)[0]
-  );
+  const [sceneId, setSceneId] = useState<string>(availableScenes[0]?.id || "");
 
   const handleSceneSelect = () => {
     switch (selectedType) {
@@ -124,13 +123,17 @@ const GridDebugMenu = () => {
                 <select
                   className="bg-gray-800 text-gray-200 p-1 text-xs rounded flex-1"
                   value={sceneId}
-                  onChange={(e) => setSceneId(e.target.value)}
+                  onChange={(e) => {
+                    setSceneId(e.target.value);
+                  }}
                 >
-                  {Object.entries(availableScenes).map(([id, scene]) => (
-                    <option key={id} value={id}>
-                      {scene.name}
-                    </option>
-                  ))}
+                  {availableScenes.map((scene) => {
+                    return (
+                      <option key={scene.id} value={scene.id}>
+                        {scene.name} ({scene.id})
+                      </option>
+                    );
+                  })}
                 </select>
               </div>
             )}

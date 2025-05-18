@@ -93,10 +93,6 @@ const StrategicMap = () => {
       const toNode = nodes.find((n) => n.id === connection.to);
       if (!fromNode || !toNode) return null;
 
-      // console.log(
-      //   `Generating path from ${fromNode.name} to ${toNode.name} with ${connection.segments} segments`
-      // );
-
       const { points, distance } = getPathCoordinates(fromNode, toNode, 7);
 
       //find the connection with the fromNode.name and toNode.name and edit the distance

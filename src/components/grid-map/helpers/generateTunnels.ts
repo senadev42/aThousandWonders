@@ -1,5 +1,9 @@
-import { BaseTiles, VIEWPORT_HEIGHT, VIEWPORT_WIDTH } from "../store/state";
-import { BaseCell } from "../store/state";
+import {
+  BaseTiles,
+  VIEWPORT_HEIGHT,
+  VIEWPORT_WIDTH,
+} from "@/components/grid-map/store/state";
+import { BaseCell } from "@/components/grid-map/store/state";
 
 const getNeighbors = (x: number, y: number): number[][] => {
   const neighbors = [];

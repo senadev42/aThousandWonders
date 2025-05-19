@@ -20,7 +20,14 @@
     "noUnusedLocals": true,
     "noUnusedParameters": true,
     "noFallthroughCasesInSwitch": true,
-    "noUncheckedSideEffectImports": true
+    "noUncheckedSideEffectImports": true,
+
+    /* Paths */
+    "paths": {
+      "@/*": ["./src/*"],
+      "@scenes/*": ["./src/components/grid-map/scenes/templates/*"],
+      "@components/*": ["./src/components/*"]
+    }
   },
   "include": ["src"]
 }

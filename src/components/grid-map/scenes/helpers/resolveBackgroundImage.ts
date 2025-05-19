@@ -1,9 +1,9 @@
-import { CELL_SIZE } from "../store/state";
-import { SceneIdType } from "./sceneProcessor";
+import { CELL_SIZE } from "@/components/grid-map/store/state";
+import { SceneIdType } from "@/components/grid-map/scenes/sceneProcessor";
 
 //assets
-import guestOld from "../../../assets/scenes/guestOld.png";
-import messHallOld from "../../../assets/scenes/messHallOld.png";
+import guestOld from "@/assets/scenes/guestOld.png";
+import messHallOld from "@/assets/scenes/messHallOld.png";
 
 export interface SceneBackground {
   imageUrl: string;

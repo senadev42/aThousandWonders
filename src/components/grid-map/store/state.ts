@@ -1,7 +1,7 @@
 // state.ts
 import { proxy } from "valtio";
-import { TransitionDefinition } from "../scenes/types";
-import { SceneBackground } from "../scenes/resolveBackgroundImage";
+import { TransitionDefinition } from "@/components/grid-map/scenes/types";
+import { SceneBackground } from "@/components/grid-map/scenes/helpers/resolveBackgroundImage";
 
 export const VIEWPORT_WIDTH = 13;
 export const VIEWPORT_HEIGHT = 10;

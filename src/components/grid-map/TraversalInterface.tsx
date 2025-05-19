@@ -1,9 +1,9 @@
 import { useEffect } from "react";
 import { useSnapshot } from "valtio";
-import { useTravelStore } from "./store";
-import GridMapComponent from "./GridMapComponent";
-import { SceneType } from "./store/state";
-import GridDebugMenu from "./GridDebugMenu";
+import { useTravelStore } from "@/components/grid-map/store";
+import GridMapComponent from "@/components/grid-map/GridMapComponent";
+import { SceneType } from "@/components/grid-map/store/state";
+import GridDebugMenu from "@/components/grid-map/GridDebugMenu";
 
 const TraversalInterface = () => {
   const { state, initializeScene } = useTravelStore();

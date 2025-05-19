@@ -1,7 +1,7 @@
 import {
   StrategicConnection,
   StrategicNode,
-} from "../StrategicMap/StrategicGrid";
+} from "@/components/strategic-map/StrategicGrid";
 
 export const nodes: StrategicNode[] = [
   {

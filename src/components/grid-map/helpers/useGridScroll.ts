@@ -1,6 +1,10 @@
 // useGridScroll.ts
 import { useCallback, useEffect, useState } from "react";
-import { CELL_SIZE, VIEWPORT_HEIGHT, VIEWPORT_WIDTH } from "../store/state";
+import {
+  CELL_SIZE,
+  VIEWPORT_HEIGHT,
+  VIEWPORT_WIDTH,
+} from "@/components/grid-map/store/state";
 
 const VISIBILITY_PADDING = 4;
 

@@ -1,4 +1,4 @@
-import { BaseCell, BaseTiles } from "../store/state";
+import { BaseCell, BaseTiles } from "@/components/grid-map/store/state";
 
 interface Room {
   x: number;

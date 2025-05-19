@@ -1,7 +1,7 @@
-import StrategicMap from "./components/StrategicMap/StrategicGrid";
-import TraversalInterface from "./components/GridMap/TraversalInterface";
 import { useSnapshot } from "valtio";
-import { gameState, Views } from "./store";
+import StrategicMap from "@/components/strategic-map/StrategicGrid";
+import TraversalInterface from "@/components/grid-map/TraversalInterface";
+import { gameState, Views } from "@/store.ts";
 
 function HeaderButton({
   view,

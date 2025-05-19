@@ -1,6 +1,6 @@
 //GridMapComponent.tsx
 import { useSnapshot } from "valtio";
-import { useTravelStore } from "./store";
+import { useTravelStore } from "@/components/grid-map/store";
 import {
   BaseCell,
   BaseTiles,
@@ -8,10 +8,26 @@ import {
   DebugInfo,
   VIEWPORT_HEIGHT,
   VIEWPORT_WIDTH,
-} from "./store/state";
+} from "@/components/grid-map/store/state";
 import React, { useRef } from "react";
-import { getFeatureIcon } from "./scenes/getTransitionIcon";
-import { resolveBackgroundImage } from "./scenes/resolveBackgroundImage";
+import { getFeatureIcon } from "@/components/grid-map/scenes/helpers/getTransitionIcon";
+import { resolveBackgroundImage } from "@/components/grid-map/scenes/helpers/resolveBackgroundImage";
+
+const ChromaticOverlay = () => {
+  return (
+    <div
+      className="absolute inset-0 pointer-events-none mix-blend-overlay animate-gradient"
+      style={{
+        background: `linear-gradient(
+        30deg,
+        rgba(255, 240, 79, 0.3) 0%, 
+        rgba(224, 213, 0, 0.3) 100%)
+        `,
+        filter: "blur(20px)",
+      }}
+    />
+  );
+};
 
 const GridMapComponent = () => {
   const { handleCellInteract, state } = useTravelStore();
@@ -60,6 +76,8 @@ const GridMapComponent = () => {
     ? "scrollbar-custom"
     : "scrollbar-none";
 
+  console.log("re-render?");
+
   return (
     <div
       ref={scrollRef}
@@ -77,6 +95,7 @@ const GridMapComponent = () => {
             gridAutoRows: `${CELL_SIZE}px`,
             width: `${currentScene.width * CELL_SIZE}px`,
             height: `${currentScene.height * CELL_SIZE}px`,
+            filter: debugInfo.showCoords ? "blur(1px)" : "",
             ...backgroundImage,
           }}
         >
@@ -84,6 +103,7 @@ const GridMapComponent = () => {
 
           {gridCells}
         </div>
+        {debugInfo.showCoords && <ChromaticOverlay />}
       </div>
     </div>
   );
@@ -116,11 +136,11 @@ const MapCell: React.FC<MapCellProps> = React.memo(
         className={`w-full h-full flex items-center justify-center hover:brightness-134 ${bgColor}`}
         onClick={(event) => onInteract(event)}
       >
-        {debugInfo.showCoords && (
+        {/* {debugInfo.showCoords && (
           <span className="absolute inset-0 flex items-center justify-center z-10 text-[0.6rem] opacity-50">
             {coordString}
           </span>
-        )}
+        )} */}
 
         {cell.transitionId && (
           <span className="absolute inset-0 flex items-center justify-center z-10 text-[0.6rem] opacity-50 bg-gray-700">

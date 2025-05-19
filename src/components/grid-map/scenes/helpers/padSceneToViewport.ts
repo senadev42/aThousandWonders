@@ -1,5 +1,5 @@
-import { Scene, BaseCell, BaseTiles } from "../store/state";
-import { TransitionDefinition } from "./sceneProcessor";
+import { Scene, BaseCell, BaseTiles } from "../../store/state";
+import { TransitionDefinition } from "@/components/grid-map/scenes/types";
 
 /**
  * Pads the scene to fit the viewport dimensions by adding walls around the original scene.
@@ -43,8 +43,10 @@ export function padSceneToViewport(
     Object.entries(scene.transitions).forEach(([id, transition]) => {
       shiftedTransitions[id] = {
         ...transition,
-        positionX: transition.positionX + horizontalPadding,
-        positionY: transition.positionY + verticalPadding,
+        position: {
+          x: transition.position.x + horizontalPadding,
+          y: transition.position.y + verticalPadding,
+        },
       };
     });
   }

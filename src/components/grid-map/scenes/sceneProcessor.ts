@@ -1,14 +1,23 @@
 //sceneProcessor.ts
-import { BaseCell, BaseTiles, Scene, SceneType } from "../store/state";
-import { useGridMapState } from "../store/state";
-import { RawScene, SceneMetadata, TransitionDefinition } from "./types";
+import {
+  BaseCell,
+  BaseTiles,
+  Scene,
+  SceneType,
+} from "@/components/grid-map/store/state";
+import { useGridMapState } from "@/components/grid-map/store/state";
+import {
+  RawScene,
+  SceneMetadata,
+  TransitionDefinition,
+} from "@/components/grid-map/scenes/types";
 
-import tavern1 from "./testTavernScene.json";
-import testSmol from "./testSmolScene.json";
-import testGuest from "./testGuest.json";
-import testMesshall from "./testMessHall.json";
+import tavern1 from "@scenes/testTavernScene.json";
+import testSmol from "@scenes/testSmolScene.json";
+import testGuest from "@scenes/testGuest.json";
+import testMesshall from "@scenes/testMessHall.json";
 
-import { sceneBackgrounds } from "./resolveBackgroundImage";
+import { sceneBackgrounds } from "./helpers/resolveBackgroundImage";
 
 const rawScenes: Record<string, RawScene> = {
   tavern1: tavern1,

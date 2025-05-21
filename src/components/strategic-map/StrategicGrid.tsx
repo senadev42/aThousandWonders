@@ -5,6 +5,10 @@ import {
   connections,
   nodes,
 } from "@/components/strategic-map/mockStrategicData";
+import {
+  getConnection,
+  getValidConnections,
+} from "@/components/strategic-map/helpers/getConnections";
 
 type NodeType = "settlement" | "ruins" | "oasis" | "market";
 
@@ -33,13 +37,6 @@ const StrategicMap = () => {
   const [hoveredConnection, setHoveredConnection] =
     useState<StrategicConnection | null>(null);
 
-  // Get all valid connections for a node
-  const getValidConnections = (nodeId: string) => {
-    return connections
-      .filter((c) => c.from === nodeId || c.to === nodeId)
-      .map((c) => (c.from === nodeId ? c.to : c.from));
-  };
-
   const handleNodeClick = (nodeId: string) => {
     setPathNodes((prev) => {
       // If empty, start new path
@@ -47,7 +44,7 @@ const StrategicMap = () => {
 
       const lastNode = prev[prev.length - 1];
       // Check if clicked node is connected to last node in path
-      const validNextNodes = getValidConnections(lastNode);
+      const validNextNodes = getValidConnections(lastNode, connections);
 
       if (validNextNodes.includes(nodeId)) {
         // Add to path if valid connection exists
@@ -57,15 +54,6 @@ const StrategicMap = () => {
       // Start new path if invalid
       return [nodeId];
     });
-  };
-
-  // Get connection between two nodes
-  const getConnection = (fromId: string, toId: string) => {
-    return connections.find(
-      (c) =>
-        (c.from === fromId && c.to === toId) ||
-        (c.from === toId && c.to === fromId)
-    );
   };
 
   // Calculate total path statistics
@@ -78,7 +66,11 @@ const StrategicMap = () => {
 
     // Calculate stats for each segment
     for (let i = 0; i < pathNodes.length - 1; i++) {
-      const connection = getConnection(pathNodes[i], pathNodes[i + 1]);
+      const connection = getConnection(
+        pathNodes[i],
+        pathNodes[i + 1],
+        connections
+      );
       if (connection) {
         totalDistance += connection.distance;
         totalTime += connection.timeEstimate;
@@ -212,6 +204,35 @@ const StrategicMap = () => {
       </div>
 
       {/* Path Summary */}
+      <PathSummary
+        pathNodes={pathNodes}
+        nodes={nodes}
+        pathStats={pathStats}
+        onClearPath={() => setPathNodes([])}
+      />
+    </div>
+  );
+};
+
+export default StrategicMap;
+
+const PathSummary = ({
+  pathNodes,
+  nodes,
+  pathStats,
+  onClearPath,
+}: {
+  pathNodes: string[];
+  nodes: StrategicNode[];
+  pathStats: {
+    totalDistance: number;
+    totalTime: number;
+    maxDanger: number;
+  } | null;
+  onClearPath: () => void;
+}) => {
+  return (
+    <div>
       <div className="bg-gray-900 rounded-lg p-4 min-h-[6rem] flex flex-col items-center justify-center gap-2">
         {pathNodes.length === 0 && (
           <div className="text-gray-500 text-center text-2xl font-medium">
@@ -245,10 +266,10 @@ const StrategicMap = () => {
       </div>
 
       <button
-        className="px-4 py-2 rounded transition-colors 
+        className="px-4 py-2 transition-colors  w-full rounded-md  mt-2
           disabled:bg-gray-800 disabled:text-gray-300 disabled:cursor-not-allowed
           enabled:bg-blue-600 enabled:text-white enabled:hover:bg-blue-700"
-        onClick={() => setPathNodes([])}
+        onClick={onClearPath}
         disabled={pathNodes.length === 0}
       >
         Clear Path
@@ -256,5 +277,3 @@ const StrategicMap = () => {
     </div>
   );
 };
-
-export default StrategicMap;

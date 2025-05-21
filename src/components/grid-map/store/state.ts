@@ -4,7 +4,7 @@ import { TransitionDefinition } from "@/components/grid-map/scenes/types";
 import { SceneBackground } from "@/components/grid-map/scenes/helpers/resolveBackgroundImage";
 
 export const VIEWPORT_WIDTH = 13;
-export const VIEWPORT_HEIGHT = 10;
+export const VIEWPORT_HEIGHT = 11;
 
 export const CELL_SIZE = 45;
 

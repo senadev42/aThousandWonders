@@ -2,6 +2,7 @@ import { useSnapshot } from "valtio";
 import StrategicMap from "@/components/strategic-map/StrategicGrid";
 import TraversalInterface from "@/components/grid-map/TraversalInterface";
 import { gameState, Views } from "@/store.ts";
+import RegionMap from "./components/region-map/RegionMap";
 
 function HeaderButton({
   view,
@@ -62,6 +63,7 @@ function App() {
       <main className="pt-15 flex items-center justify-center min-h-screen">
         {currentView === Views.STRATEGIC && <StrategicMap />}
         {currentView === Views.LOCAL && <TraversalInterface />}
+        {currentView === Views.REGION && <RegionMap />}
       </main>
     </div>
   );

@@ -31,10 +31,11 @@ export type SceneIdType = keyof typeof rawScenes;
 export const getSceneById = (id: string): Scene => {
   const state = useGridMapState();
 
+  // TODO: Uncomment when ready to ship (or you need it)
   // Check if scene is already processed
-  if (state.processedScenes[id]) {
-    return state.processedScenes[id];
-  }
+  // if (state.processedScenes[id]) {
+  //   return state.processedScenes[id];
+  // }
 
   // Get and process raw scene
   const rawScene = rawScenes[id];

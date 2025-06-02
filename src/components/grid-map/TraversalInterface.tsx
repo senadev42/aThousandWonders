@@ -27,13 +27,34 @@ const TraversalInterface = () => {
   }
 
   return (
-    <div className="flex flex-col gap-2 items-center justify-start w-full mt-10">
-      <GridMapComponent />
-      <GridDebugMenu />
+    <div className="flex mt-2 items-center space-x-2">
+      <div className="flex flex-col gap-y-2">
+        <div className="flex h-[5rem] w-[15rem] bg-gray-900 rounded-md"></div>
+
+        {/* Left panel 1 */}
+        <div className="flex h-[15rem] w-[15rem] bg-gray-900 rounded-md"></div>
+
+        {/* Left panel 2 */}
+        <div className="flex h-[12rem] w-[15rem] bg-gray-900 rounded-md">
+          <GridDebugMenu />
+        </div>
+      </div>
+
+      <div className="flex flex-col gap-y-2 justify-start items-center">
+        {/* The actual traversable scene map */}
+
+        <GridMapComponent />
+      </div>
+
+      <div className="flex flex-col gap-y-2">
+        {/* Right Panel 1 */}
+        <div className="flex h-[10rem] w-[15rem] bg-gray-900 rounded-md"></div>
+
+        {/* Right panel 2*/}
+        <div className="flex h-[22rem] w-[15rem] bg-gray-900 rounded-md"></div>
+      </div>
     </div>
   );
 };
-
-// Grid Component
 
 export default TraversalInterface;

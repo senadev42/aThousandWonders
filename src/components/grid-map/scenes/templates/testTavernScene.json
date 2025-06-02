@@ -15,6 +15,7 @@
         "X O O O O O O O O O O O X",
         "X O O O O O O O O O O O X",
         "X O O O O O O O O O O O X",
+        "X O O O O O O O O O O O X",
         "X X X X X X X X X X X X X"
     ],
     "transitions": [
@@ -29,7 +30,7 @@
             "positionY": 6,
             "target": {
                 "x": 3,
-                "y": 4
+                "y": 6
             }
         }
     ]

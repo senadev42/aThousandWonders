@@ -44,7 +44,7 @@ const GridDebugMenu = () => {
   };
 
   return (
-    <div className="flex justify-between items-start bg-gray-900 p-4 rounded text-white text-xs h-[8rem] w-[30rem]">
+    <div className="flex flex-col justify-between items-start bg-gray-900 p-3 rounded text-white text-xs">
       {/* Debug Information */}
       <div className="text-gray-200 space-x-2">
         {/* Cell being hovered over */}
@@ -81,7 +81,7 @@ const GridDebugMenu = () => {
       </div>
 
       {/* Regen section */}
-      <div className="text-gray-200 w-[15rem]">
+      <div className="text-gray-200 w-[13rem]">
         <div className="border-slate-400 rounded-md mt-2">
           {/* Drop down with 3 options, empty map, random map, and a scene */}
           <div className="space-y-2">

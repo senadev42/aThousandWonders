@@ -15,7 +15,7 @@ function HeaderButton({
 }) {
   return (
     <button
-      className={`p-2 rounded-md ${
+      className={`p-1 px-2 rounded-md ${
         currentView === view ? "bg-slate-600" : "hover:bg-slate-700"
       }`}
       onClick={onClick}
@@ -31,16 +31,16 @@ function Header() {
   const viewOptions = Object.values(Views);
 
   return (
-    <header className="fixed top-0 left-0 right-0 bg-slate-800 text-white p-4 py-2 flex items-center justify-between">
+    <header className="fixed top-0 left-0 right-0 bg-slate-800 text-white p-4 py-1 flex items-center justify-between">
       {/* Title */}
       <div className="flex items-center gap-4">
-        <h1 className="text-2xl font-mono bg-gradient-to-r from-purple-400 to-pink-400 bg-clip-text text-transparent flex items-start">
+        <h1 className="text-lg font-mono bg-gradient-to-r from-purple-400 to-pink-400 bg-clip-text text-transparent flex items-start">
           a thousand wonders <span className="text-xs">pre-pre-pre alpha </span>
         </h1>
       </div>
 
       {/* View Options */}
-      <div className="flex gap-2">
+      <div className="flex gap-2 text-sm">
         {viewOptions.map((view) => (
           <HeaderButton
             key={view}
@@ -60,7 +60,7 @@ function App() {
   return (
     <div className="min-h-screen w-full bg-slate-700">
       <Header />
-      <main className="pt-15 flex items-center justify-center min-h-screen">
+      <main className="flex items-center justify-center pt-15">
         {currentView === Views.STRATEGIC && <StrategicMap />}
         {currentView === Views.LOCAL && <TraversalInterface />}
         {currentView === Views.REGION && <RegionMap />}

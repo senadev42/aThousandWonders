@@ -123,9 +123,9 @@ const StrategicMap = () => {
   };
 
   return (
-    <div className="flex flex-col gap-4 w-[40rem]">
+    <div className="flex flex-col gap-4 w-[50rem]">
       {/* Map Area */}
-      <div className="relative w-full h-96 bg-gray-900 rounded-lg p-4">
+      <div className="relative w-full h-[30rem] bg-gray-900 rounded-lg p-4">
         {/* Connections */}
         {connectionPaths.map((pathData) => {
           if (!pathData) return null;

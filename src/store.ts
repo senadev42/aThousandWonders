@@ -1,9 +1,10 @@
 import { proxy } from "valtio";
 
 export enum Views {
+  REGION = "REGION",
   STRATEGIC = "STRATEGIC",
   LOCAL = "LOCAL",
-  REGION = "REGION",
+
   // Add more views as needed
 }
 

@@ -81,7 +81,7 @@ const GridMapComponent = () => {
   return (
     <div
       ref={scrollRef}
-      className={`border-4 border-black rounded bg-gray-900 overflow-auto flex ${centerOnXPlane} ${centerOnYPlane} ${scrollbarcustomClass}`}
+      className={`border-2 border-black rounded-md bg-gray-900 overflow-auto flex ${centerOnXPlane} ${centerOnYPlane} ${scrollbarcustomClass}`}
       style={{
         width: `${VIEWPORT_WIDTH * CELL_SIZE + 8}px`,
         height: `${VIEWPORT_HEIGHT * CELL_SIZE + 8}px`,
@@ -95,7 +95,6 @@ const GridMapComponent = () => {
             gridAutoRows: `${CELL_SIZE}px`,
             width: `${currentScene.width * CELL_SIZE}px`,
             height: `${currentScene.height * CELL_SIZE}px`,
-            filter: debugInfo.showCoords ? "blur(1px)" : "",
             ...backgroundImage,
           }}
         >
@@ -103,7 +102,7 @@ const GridMapComponent = () => {
 
           {gridCells}
         </div>
-        {debugInfo.showCoords && <ChromaticOverlay />}
+        {/* {debugInfo.showCoords && <ChromaticOverlay />} */}
       </div>
     </div>
   );
@@ -136,11 +135,11 @@ const MapCell: React.FC<MapCellProps> = React.memo(
         className={`w-full h-full flex items-center justify-center hover:brightness-134 ${bgColor}`}
         onClick={(event) => onInteract(event)}
       >
-        {/* {debugInfo.showCoords && (
+        {debugInfo.showCoords && (
           <span className="absolute inset-0 flex items-center justify-center z-10 text-[0.6rem] opacity-50">
             {coordString}
           </span>
-        )} */}
+        )}
 
         {cell.transitionId && (
           <span className="absolute inset-0 flex items-center justify-center z-10 text-[0.6rem] opacity-50 bg-gray-700">

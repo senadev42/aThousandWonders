@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from "react";
 import khorSmall from "@/assets/khorSmall.png";
-import { regionNodeData } from "@/components/region-map/regionData";
+import { regionNodeData } from "@/features/region-map/regionData";
 import { PolyPoint, Polygon, Region, CanvasState } from "./types";
 
 const RegionMap = () => {

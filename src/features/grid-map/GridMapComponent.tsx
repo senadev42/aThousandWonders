@@ -1,6 +1,6 @@
 //GridMapComponent.tsx
 import { useSnapshot } from "valtio";
-import { useTravelStore } from "@/components/grid-map/store";
+import { useTravelStore } from "@/features/grid-map/store";
 import {
   BaseCell,
   BaseTiles,
@@ -8,10 +8,10 @@ import {
   DebugInfo,
   VIEWPORT_HEIGHT,
   VIEWPORT_WIDTH,
-} from "@/components/grid-map/store/state";
+} from "@/features/grid-map/store/state";
 import React, { useRef } from "react";
-import { getFeatureIcon } from "@/components/grid-map/scenes/helpers/getTransitionIcon";
-import { resolveBackgroundImage } from "@/components/grid-map/scenes/helpers/resolveBackgroundImage";
+import { getFeatureIcon } from "@/features/grid-map/scenes/helpers/getTransitionIcon";
+import { resolveBackgroundImage } from "@/features/grid-map/scenes/helpers/resolveBackgroundImage";
 
 const ChromaticOverlay = () => {
   return (
@@ -81,7 +81,7 @@ const GridMapComponent = () => {
   return (
     <div
       ref={scrollRef}
-      className={`border-2 border-black rounded-md bg-gray-900 overflow-auto flex ${centerOnXPlane} ${centerOnYPlane} ${scrollbarcustomClass}`}
+      className={`border-4 border-black rounded-md bg-gray-900 overflow-auto flex ${centerOnXPlane} ${centerOnYPlane} ${scrollbarcustomClass}`}
       style={{
         width: `${VIEWPORT_WIDTH * CELL_SIZE + 8}px`,
         height: `${VIEWPORT_HEIGHT * CELL_SIZE + 8}px`,

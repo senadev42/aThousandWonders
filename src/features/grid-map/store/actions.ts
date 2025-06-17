@@ -11,9 +11,9 @@ import {
   BaseTiles,
   CELL_SIZE,
 } from "./state";
-import { generateTunnels } from "@/components/grid-map/helpers/generateTunnels";
-import { getSceneById } from "@/components/grid-map/scenes/sceneProcessor";
-import { generateRoomDungeon } from "@/components/grid-map/helpers/generateDungeons";
+import { generateTunnels } from "@/features/grid-map/helpers/generateTunnels";
+import { getSceneById } from "@/features/grid-map/scenes/sceneProcessor";
+import { generateRoomDungeon } from "@/features/grid-map/helpers/generateDungeons";
 
 export const useTravelActions = () => {
   const state = useGridMapState();

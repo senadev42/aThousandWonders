@@ -1,8 +1,8 @@
 import { useSnapshot } from "valtio";
-import StrategicMap from "@/components/strategic-map/StrategicGrid";
-import TraversalInterface from "@/components/grid-map/TraversalInterface";
+import StrategicMap from "@/features/strategic-map/StrategicGrid";
+import TraversalInterface from "@/features/scene-ui/SceneInterface";
+import RegionMap from "@/features/region-map/RegionMap";
 import { gameState, Views } from "@/store.ts";
-import RegionMap from "./components/region-map/RegionMap";
 
 function HeaderButton({
   view,
@@ -31,16 +31,16 @@ function Header() {
   const viewOptions = Object.values(Views);
 
   return (
-    <header className="fixed top-0 left-0 right-0 bg-slate-800 text-white p-4 py-1 flex items-center justify-between">
+    <header className="fixed top-0 left-0 right-0 text-white p-4 py-1 flex items-center justify-between">
       {/* Title */}
       <div className="flex items-center gap-4">
-        <h1 className="text-lg font-mono bg-gradient-to-r from-purple-400 to-pink-400 bg-clip-text text-transparent flex items-start">
+        <h1 className="text-sm font-mono bg-gradient-to-r from-purple-400 to-pink-400 bg-clip-text text-transparent flex items-start">
           a thousand wonders <span className="text-xs">pre-pre-pre alpha </span>
         </h1>
       </div>
 
       {/* View Options */}
-      <div className="flex gap-2 text-sm">
+      <div className="flex gap-1 text-sm items-center">
         {viewOptions.map((view) => (
           <HeaderButton
             key={view}
@@ -58,9 +58,9 @@ function App() {
   const { currentView } = useSnapshot(gameState);
 
   return (
-    <div className="min-h-screen w-full bg-slate-700">
+    <div className="min-h-screen bg-slate-700 flex flex-col justify-center">
       <Header />
-      <main className="flex items-center justify-center pt-15">
+      <main className="flex items-center justify-center">
         {currentView === Views.STRATEGIC && <StrategicMap />}
         {currentView === Views.LOCAL && <TraversalInterface />}
         {currentView === Views.REGION && <RegionMap />}

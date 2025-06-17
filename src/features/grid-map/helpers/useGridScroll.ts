@@ -4,7 +4,7 @@ import {
   CELL_SIZE,
   VIEWPORT_HEIGHT,
   VIEWPORT_WIDTH,
-} from "@/components/grid-map/store/state";
+} from "@/features/grid-map/store/state";
 
 const VISIBILITY_PADDING = 4;
 

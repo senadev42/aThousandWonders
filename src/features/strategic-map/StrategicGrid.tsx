@@ -1,14 +1,11 @@
 import { Circle, Crosshair, Timer } from "lucide-react";
 import React, { useState, useMemo } from "react";
-import { getPathCoordinates } from "@/components/strategic-map/helpers/generateStrategicPaths";
-import {
-  connections,
-  nodes,
-} from "@/components/strategic-map/mockStrategicData";
+import { getPathCoordinates } from "@/features/strategic-map/helpers/generateStrategicPaths";
+import { connections, nodes } from "@/features/strategic-map/mockStrategicData";
 import {
   getConnection,
   getValidConnections,
-} from "@/components/strategic-map/helpers/getConnections";
+} from "@/features/strategic-map/helpers/getConnections";
 
 type NodeType = "settlement" | "ruins" | "oasis" | "market";
 

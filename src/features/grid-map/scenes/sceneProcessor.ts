@@ -4,13 +4,13 @@ import {
   BaseTiles,
   Scene,
   SceneType,
-} from "@/components/grid-map/store/state";
-import { useGridMapState } from "@/components/grid-map/store/state";
+} from "@/features/grid-map/store/state";
+import { useGridMapState } from "@/features/grid-map/store/state";
 import {
   RawScene,
   SceneMetadata,
   TransitionDefinition,
-} from "@/components/grid-map/scenes/types";
+} from "@/features/grid-map/scenes/types";
 
 import tavern1 from "@scenes/testTavernScene.json";
 import testSmol from "@scenes/testSmolScene.json";

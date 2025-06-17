@@ -1,6 +1,6 @@
 import { useEffect } from "react";
-import { isAdjacent } from "@/components/grid-map/store/actions";
-import { GridPosition, Scene } from "@/components/grid-map/store/state";
+import { isAdjacent } from "@/features/grid-map/store/actions";
+import { GridPosition, Scene } from "@/features/grid-map/store/state";
 
 export const useKeyboardControls = (
   playerPosition: GridPosition,

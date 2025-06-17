@@ -1,8 +1,8 @@
 import { useState } from "react";
 import { useSnapshot } from "valtio";
-import { useTravelStore } from "@/components/grid-map/store";
-import { SceneType } from "@/components/grid-map/store/state";
-import { getAvailableScenes } from "@/components/grid-map/scenes/sceneProcessor";
+import { useTravelStore } from "@/features/grid-map/store";
+import { SceneType } from "@/features/grid-map/store/state";
+import { getAvailableScenes } from "@/features/grid-map/scenes/sceneProcessor";
 
 const GridDebugMenu = () => {
   const { state, initializeScene, updateDebugSettings } = useTravelStore();
@@ -44,7 +44,7 @@ const GridDebugMenu = () => {
   };
 
   return (
-    <div className="flex flex-col justify-between items-start bg-gray-900 p-3 rounded text-white text-xs">
+    <div className="flex flex-col justify-between bg-gray-900 p-3 gap-y-4 rounded text-white text-xs">
       {/* Debug Information */}
       <div className="text-gray-200 space-x-2">
         {/* Cell being hovered over */}
@@ -81,7 +81,7 @@ const GridDebugMenu = () => {
       </div>
 
       {/* Regen section */}
-      <div className="text-gray-200 w-[13rem]">
+      <div className="text-gray-200 w-[18rem]">
         <div className="border-slate-400 rounded-md mt-2">
           {/* Drop down with 3 options, empty map, random map, and a scene */}
           <div className="space-y-2">

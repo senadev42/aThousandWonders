@@ -1,4 +1,4 @@
-import { StrategicConnection } from "@/components/strategic-map/StrategicGrid";
+import { StrategicConnection } from "@/features/strategic-map/StrategicGrid";
 
 export const getValidConnections = (
   nodeId: string,

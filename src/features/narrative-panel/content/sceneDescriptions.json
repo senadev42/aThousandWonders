@@ -1,0 +1,9 @@
+{
+    "testMesshall": {
+        "firstTime": "The dusk serpent's mess hall is an open space where the crew gathers to eat and socialize during down time. It smells a bit like fish.",
+        "normal": "You enter the mess hall."
+    },
+    "testGuest": {
+        "normal": "You enter the guest quarters."
+    }
+}

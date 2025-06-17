@@ -1,4 +1,4 @@
-import { GridPosition } from "../store/state";
+import { GridPosition } from "./store/state";
 
 export interface TransitionDefinition {
   transitionId: string;

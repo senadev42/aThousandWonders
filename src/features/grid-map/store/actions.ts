@@ -12,11 +12,15 @@ import {
   CELL_SIZE,
 } from "./state";
 import { generateTunnels } from "@/features/grid-map/helpers/generateTunnels";
-import { getSceneById } from "@/features/grid-map/scenes/sceneProcessor";
+import { getSceneById } from "@/features/grid-map/sceneProcessor";
 import { generateRoomDungeon } from "@/features/grid-map/helpers/generateDungeons";
+import { useNarrativeStore } from "@/features/narrative-panel/store";
+import { NarrativeEventTypeEnum } from "@/features/narrative-panel/store/state";
 
 export const useTravelActions = () => {
   const state = useGridMapState();
+
+  const narrativeStore = useNarrativeStore();
 
   /**
    * Accepts a initSceneparams object and initializes the scene based on the type.
@@ -111,6 +115,12 @@ export const useTravelActions = () => {
             x: Math.floor(VIEWPORT_WIDTH / 2),
             y: Math.floor(VIEWPORT_HEIGHT / 2),
           };
+
+        //fire narrative event
+        narrativeStore.addEvent(
+          initSceneparams.sceneId,
+          NarrativeEventTypeEnum.SCENE_DRESSING
+        );
 
         break;
       }

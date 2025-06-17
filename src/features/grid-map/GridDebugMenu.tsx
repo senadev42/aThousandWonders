@@ -2,7 +2,7 @@ import { useState } from "react";
 import { useSnapshot } from "valtio";
 import { useTravelStore } from "@/features/grid-map/store";
 import { SceneType } from "@/features/grid-map/store/state";
-import { getAvailableScenes } from "@/features/grid-map/scenes/sceneProcessor";
+import { getAvailableScenes } from "@/features/grid-map/sceneProcessor";
 
 const GridDebugMenu = () => {
   const { state, initializeScene, updateDebugSettings } = useTravelStore();

@@ -1,5 +1,5 @@
 import { Scene, BaseCell, BaseTiles } from "../../store/state";
-import { TransitionDefinition } from "@/features/grid-map/scenes/types";
+import { TransitionDefinition } from "@/features/grid-map/types";
 
 /**
  * Pads the scene to fit the viewport dimensions by adding walls around the original scene.

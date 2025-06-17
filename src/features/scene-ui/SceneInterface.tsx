@@ -5,6 +5,7 @@ import GridMapComponent from "@/features/grid-map/GridMapComponent";
 import { SceneType } from "@/features/grid-map/store/state";
 import GridDebugMenu from "@/features/grid-map/GridDebugMenu";
 import { FileSearch, Search } from "lucide-react";
+import NarrativePanel from "../narrative-panel/NarrativePanel";
 
 const TraversalInterface = () => {
   const { state, initializeScene } = useTravelStore();
@@ -79,43 +80,9 @@ const TraversalInterface = () => {
       </div>
 
       <div className="flex flex-col gap-y-2">
-        {/* The GM panel where it's basically running commentary on what character
-        is doing. It's both like a log and also paragraphs on paragraphs*/}
+        {/* Narrative Panel */}
         <div className="flex h-[15rem] w-[20rem] bg-gray-900 rounded-md">
-          <div className="flex-1 overflow-y-auto scrollbar-custom">
-            <div className="flex flex-col p-3 text-gray-200 space-y-2">
-              <hr className="text-gray-500 text-translucent" />
-
-              <p className="text-sm">
-                You wander through the dimly lit mess hall, weaving between long
-                wooden tables and benches. The space is empty and quiet, save
-                for the echo of your footsteps on the stone floor.
-              </p>
-
-              <p className="text-sm">
-                You spot shards of broken glass scattered by the wall. A light
-                red pool of liquid spreads slowly from the shattered bottle,
-                looking at first glance like spilled wine.
-              </p>
-
-              <div className="text-xs text-gray-400 italic flex items-center gap-x-1">
-                {/* investigation icon */}
-
-                <Search size={12} />
-
-                <span>Investigation Check: </span>
-                <span className="text-green-400">Success</span>
-              </div>
-
-              <div className="border-l-2 border-purple-500 pl-2">
-                <p className="text-sm italic text-purple-300">
-                  The bottle's label is partially intact - you can make out
-                  "Celesrose Wine". Somewhat of a rare vintage, wierd to find it
-                  here in pieces in the mess hall.
-                </p>
-              </div>
-            </div>
-          </div>
+          <NarrativePanel />
         </div>
 
         {/* Right panel 2*/}

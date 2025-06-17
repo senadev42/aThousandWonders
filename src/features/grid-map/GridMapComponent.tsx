@@ -10,8 +10,8 @@ import {
   VIEWPORT_WIDTH,
 } from "@/features/grid-map/store/state";
 import React, { useRef } from "react";
-import { getFeatureIcon } from "@/features/grid-map/scenes/helpers/getTransitionIcon";
-import { resolveBackgroundImage } from "@/features/grid-map/scenes/helpers/resolveBackgroundImage";
+import { getFeatureIcon } from "@/features/grid-map/helpers/getTransitionIcon";
+import { resolveBackgroundImage } from "@/features/grid-map/helpers/resolveBackgroundImage";
 
 const ChromaticOverlay = () => {
   return (
@@ -75,8 +75,6 @@ const GridMapComponent = () => {
   const scrollbarcustomClass = debugInfo.showScollbar
     ? "scrollbar-custom"
     : "scrollbar-none";
-
-  console.log("re-render?");
 
   return (
     <div

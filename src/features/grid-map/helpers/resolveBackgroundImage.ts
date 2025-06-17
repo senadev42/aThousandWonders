@@ -1,5 +1,5 @@
 import { CELL_SIZE } from "@/features/grid-map/store/state";
-import { SceneIdType } from "@/features/grid-map/scenes/sceneProcessor";
+import { SceneIdType } from "@/features/grid-map/sceneProcessor";
 
 //assets
 import guestOld from "@/assets/scenes/guestOld.png";

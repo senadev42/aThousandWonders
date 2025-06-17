@@ -10,7 +10,7 @@ import {
   RawScene,
   SceneMetadata,
   TransitionDefinition,
-} from "@/features/grid-map/scenes/types";
+} from "@/features/grid-map/types";
 
 import tavern1 from "@scenes/testTavernScene.json";
 import testSmol from "@scenes/testSmolScene.json";

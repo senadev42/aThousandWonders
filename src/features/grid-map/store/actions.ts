@@ -194,11 +194,18 @@ export const useTravelActions = () => {
     y: number,
     skipValidation: boolean = false
   ): void => {
-    if (
-      !isValidMove(x, y, state.playerPosition, state.currentScene.data) &&
-      !skipValidation
-    )
-      return;
+    if (!skipValidation) {
+      // Basic validation first (walls etc)
+      if (!isValidMove(x, y, state.playerPosition, state.currentScene.data))
+        return;
+
+      // Pre-compute current position hash part once
+      const fromHash = `${state.playerPosition.x},${state.playerPosition.y}`;
+      const toHash = `${x},${y}`;
+
+      // Direct property access with pre-computed hash
+      if (state.currentScene.blockedMoves?.[`${fromHash}:${toHash}`]) return;
+    }
 
     state.currentScene.data = revealAreaAround(x, y, state.currentScene.data);
 

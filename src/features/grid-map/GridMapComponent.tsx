@@ -121,11 +121,19 @@ const MapCell: React.FC<MapCellProps> = React.memo(
     const { coordString, cell, onInteract, debugInfo } = props;
 
     let bgColor;
-
-    if (cell.type === BaseTiles.WALL) bgColor = "bg-gray-900";
-    else if (cell.type === BaseTiles.FLOOR) {
-      if (debugInfo.isUsingBgImage) bgColor = "bg-transparent";
-      else if (cell.revealed) bgColor = "bg-gray-600";
+    switch (cell.type) {
+      case BaseTiles.WALL:
+        bgColor = "bg-gray-900";
+        break;
+      case BaseTiles.FLOOR:
+        if (debugInfo.isUsingBgImage) bgColor = "bg-transparent";
+        else if (cell.revealed) bgColor = "bg-gray-600";
+        break;
+      case BaseTiles.INVISIBLE_WALL:
+        bgColor = "bg-transparent";
+        break;
+      default:
+        throw new Error(`Unknown cell type: ${cell.type}`);
     }
 
     return (

@@ -12,6 +12,7 @@ export const CELL_SIZE = 45;
 export enum BaseTiles {
   WALL = "wall",
   FLOOR = "floor",
+  INVISIBLE_WALL = "invisible-wall",
 }
 
 export type BaseCell = {
@@ -53,6 +54,7 @@ export type Scene = {
   background?: SceneBackground;
   name?: string;
   transitions?: Record<string, TransitionDefinition>;
+  blockedMoves?: Record<string, boolean>;
 } & Dimensions &
   SceneParams;
 

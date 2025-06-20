@@ -15,6 +15,7 @@ export interface RawScene {
   layout: string[];
   transitions?: TransitionDefinition[];
   features?: Record<string, string>;
+  blockedMoves?: string[];
 }
 
 export type SceneMetadata = {

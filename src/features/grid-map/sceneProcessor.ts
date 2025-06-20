@@ -82,8 +82,20 @@ const processScene = (scene: RawScene): Scene => {
     for (let x = 0; x < width; x++) {
       if (scene.layout[y][x] === " ") continue;
 
-      const type =
-        scene.layout[y][x] === "X" ? BaseTiles.WALL : BaseTiles.FLOOR;
+      let type: BaseTiles;
+      switch (scene.layout[y][x]) {
+        case "X":
+          type = BaseTiles.WALL;
+          break;
+        case "O":
+          type = BaseTiles.FLOOR;
+          break;
+        case "N":
+          type = BaseTiles.INVISIBLE_WALL;
+          break;
+        default:
+          throw new Error(`Unknown tile type: ${scene.layout[y][x]}`);
+      }
 
       row.push({
         type,
@@ -119,6 +131,21 @@ const processScene = (scene: RawScene): Scene => {
     );
   }
 
+  // Parse blocked moves
+  let blockedMoves: Record<string, boolean> = {};
+  if (scene.blockedMoves) {
+    scene.blockedMoves.forEach((restriction) => {
+      const [from, to, direction] = restriction.split(":");
+
+      if (direction === "F" || direction === "B") {
+        blockedMoves[`${from}:${to}`] = true;
+      }
+      if (direction === "S" || direction === "B") {
+        blockedMoves[`${to}:${from}`] = true;
+      }
+    });
+  }
+
   return {
     sceneType: SceneType.PREMADE,
     sceneId: scene.id,
@@ -129,5 +156,6 @@ const processScene = (scene: RawScene): Scene => {
     height: processedData.length,
     data: processedData,
     transitions: transitions,
+    blockedMoves: blockedMoves,
   };
 };

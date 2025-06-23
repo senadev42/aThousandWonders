@@ -15,7 +15,8 @@ import { generateTunnels } from "@/features/grid-map/helpers/generateTunnels";
 import { getSceneById } from "@/features/grid-map/sceneProcessor";
 import { generateRoomDungeon } from "@/features/grid-map/helpers/generateDungeons";
 import { useNarrativeStore } from "@/features/narrative-panel/store";
-import { NarrativeEventTypeEnum } from "@/features/narrative-panel/store/state";
+import { NarrativeEventTypeEnum } from "@/features/narrative-panel/types";
+import { InteractableTypeEnum } from "@/features/grid-map/types";
 
 export const useTravelActions = () => {
   const state = useGridMapState();
@@ -184,6 +185,26 @@ export const useTravelActions = () => {
     }
   };
 
+  const handleInteractable = (id: string) => {
+    const interactable = state.currentScene.interactables?.[id];
+
+    if (!interactable) return;
+
+    switch (interactable.type) {
+      case InteractableTypeEnum.BASIC:
+        alert("TODO: Implement basic interaction");
+        break;
+      case InteractableTypeEnum.INVESTIGATE:
+        narrativeStore.addEvent(
+          interactable.id,
+          NarrativeEventTypeEnum.INTERACTABLE
+        );
+
+        break;
+      default:
+        throw new Error(`Unknown interactable type: ${interactable.type}`);
+    }
+  };
   /**
    * Moves the player to a new position if the move is valid.
    * Reveals area immediately around the player.
@@ -228,6 +249,7 @@ export const useTravelActions = () => {
     handleCellInteract,
     movePlayer,
     updateDebugSettings,
+    handleInteractable,
   };
 };
 

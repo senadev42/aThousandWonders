@@ -9,9 +9,9 @@ import {
   VIEWPORT_WIDTH,
 } from "@/features/grid-map/store/state";
 import React, { useRef, useState } from "react";
-import { getFeatureIcon } from "@/features/grid-map/helpers/getTransitionIcon";
+import { getFeatureIcon } from "@/features/grid-map/helpers/getFeatureIcon";
 import { resolveBackgroundImage } from "@/features/grid-map/helpers/resolveBackgroundImage";
-import { Interactable } from "@/features/grid-map/types";
+import { Interactable, InteractableTypeEnum } from "@/features/grid-map/types";
 
 const ChromaticOverlay = () => {
   return (
@@ -30,7 +30,7 @@ const ChromaticOverlay = () => {
 };
 
 const GridMapComponent = () => {
-  const { handleCellInteract, state } = useTravelStore();
+  const { handleCellInteract, handleInteractable, state } = useTravelStore();
   const { currentScene, debugInfo } = useSnapshot(state);
 
   const scrollRef = useRef<HTMLDivElement | null>(null);
@@ -120,13 +120,16 @@ const GridMapComponent = () => {
           {/* Cells */}
           {gridCells}
 
-          {/* Interactable Layer */}
-          {currentScene.interactables && (
-            <InteractableLayer interactables={currentScene.interactables} />
-          )}
-
           {/* Player */}
           <Player />
+
+          {/* Interactable Layer */}
+          {currentScene.interactables && (
+            <InteractableLayer
+              interactables={currentScene.interactables}
+              handleInteractable={handleInteractable}
+            />
+          )}
 
           {/* Tooltip */}
           {debugInfo.showMousePosTooltip && showTooltip && (
@@ -229,16 +232,33 @@ const Player: React.FC = () => {
 
 type InteractableProps = {
   interactables: Record<string, Interactable>;
+  handleInteractable: (id: string) => void;
 };
 
 const InteractableLayer: React.FC<InteractableProps> = (
   props: InteractableProps
 ) => {
-  const { interactables } = props;
+  const { interactables, handleInteractable } = props;
 
   const interactableElements = Object.entries(interactables).map(
     ([id, interactable]) => {
       const { x, y } = interactable.position;
+
+      let buttonClass = "";
+      switch (interactable.type) {
+        case InteractableTypeEnum.BASIC:
+          buttonClass = "rounded-md";
+          break;
+        case InteractableTypeEnum.INVESTIGATE:
+          buttonClass = "rounded-full";
+          break;
+        default:
+          throw new Error(`Unknown interactable type: ${interactable.type}`);
+      }
+
+      buttonClass +=
+        " size-5 bg-slate-800 hover:bg-slate-700 opacity-40 hover:opacity-80";
+
       return (
         <div
           key={id}
@@ -250,16 +270,16 @@ const InteractableLayer: React.FC<InteractableProps> = (
         >
           <button
             onClick={() => {
-              alert("TODO: Implement interaction");
+              handleInteractable(id);
             }}
-            className=" h-5 w-5 bg-slate-800 hover:bg-slate-700 opacity-50 hover:opacity-70 rounded-full rounded-full transition-colors"
+            className={`${buttonClass} transition-colors`}
           >
             {React.createElement(
               getFeatureIcon(interactable.type) as React.FC<
                 React.SVGProps<SVGSVGElement>
               >,
               {
-                className: "size-5 text-white  ",
+                className: "size-5 text-white",
               }
             )}
           </button>

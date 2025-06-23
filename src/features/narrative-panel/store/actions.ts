@@ -1,13 +1,17 @@
+import { useNarrativeState } from "@/features/narrative-panel/store/state";
 import {
+  FullNarrativePayload,
   NarrativeEventTypeEnum,
-  useNarrativeState,
-} from "@/features/narrative-panel/store/state";
+  SceneOverview,
+  StaticInteractables,
+} from "@/features/narrative-panel/types";
 
 import sceneDressingRaw from "@/features/narrative-panel/content/sceneDescriptions.json";
-import { SceneNPDescriptions } from "../types";
+import staticInteractablesRaw from "@/features/narrative-panel/content/staticInteractables.json";
 
 // Add a type assertion to allow string indexing
-const sceneDressing = sceneDressingRaw as SceneNPDescriptions;
+const sceneDressing = sceneDressingRaw as SceneOverview;
+const staticInteractables = staticInteractablesRaw as StaticInteractables;
 
 export const useNarrativeActions = () => {
   const state = useNarrativeState();
@@ -20,24 +24,41 @@ export const useNarrativeActions = () => {
     // an id looks like 'testMesshall.normal' it's like a locale file key
     // use the param id to find
 
+    let payload: FullNarrativePayload;
+
     switch (type) {
       case NarrativeEventTypeEnum.SCENE_DRESSING:
-        const content = sceneDressing[id];
-
-        if (!content) return;
-
-        const npEventsPayload = [
+        payload = sceneDressing[id];
+        if (!payload) return;
+        const sceneDressingPayload = [
           ...state.npEvents,
           {
             id,
             type,
-            payload: content.normal,
+            payload: payload.normal,
+          },
+        ];
+        state.npEvents = sceneDressingPayload;
+        break;
+
+      case NarrativeEventTypeEnum.INTERACTABLE:
+        payload = staticInteractables[id];
+        if (!payload) return;
+
+        const staticInteractablePayload = [
+          ...state.npEvents,
+          {
+            id,
+            type,
+            payload: payload.normal,
           },
         ];
 
-        state.npEvents = npEventsPayload;
+        console.log(staticInteractablePayload);
 
+        state.npEvents = staticInteractablePayload;
         break;
+
       default:
         break;
     }

@@ -1,5 +1,17 @@
+export enum NarrativeEventTypeEnum {
+  SCENE_DRESSING = "SCENE_DRESSING",
+  INTERACTABLE = "INTERACTABLE",
+  DIVIDER = "DIVIDER",
+}
+
+export interface NarrativeEvent {
+  id: string;
+  type: NarrativeEventTypeEnum;
+  payload: string;
+}
+
 // scene description types
-export type NarrativePayload = {
+export type FullNarrativePayload = {
   normal: string;
   firstTime?: string;
   investigate?: {
@@ -9,4 +21,9 @@ export type NarrativePayload = {
   };
 };
 
-export type SceneNPDescriptions = Record<string, NarrativePayload>;
+export type SceneOverview = Record<
+  string,
+  Omit<FullNarrativePayload, "investigate">
+>;
+
+export type StaticInteractables = Record<string, FullNarrativePayload>;

@@ -5,7 +5,7 @@ import {
   SquareArrowLeft,
   SquareArrowRight,
   MessageCircleQuestion,
-  CircleHelpIcon,
+  ScanEye,
 } from "lucide-react";
 
 export const getFeatureIcon = (feature: string) => {
@@ -21,8 +21,10 @@ export const getFeatureIcon = (feature: string) => {
       return SquareArrowRight;
 
     //interactables
+    case "basic":
+      return ScanEye;
     case "investigate":
-      return CircleHelpIcon;
+      return MessageCircleQuestion;
     default:
       return CircleHelp;
   }

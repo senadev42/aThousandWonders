@@ -1,7 +1,7 @@
 import { CircleX, Search } from "lucide-react";
-import { useNarrativeStore } from "./store";
 import { useSnapshot } from "valtio";
-import { NarrativeEventTypeEnum } from "./store/state";
+import { useNarrativeStore } from "@/features/narrative-panel/store";
+import { NarrativeEventTypeEnum } from "@/features/narrative-panel/types";
 
 const NarrativePanel = () => {
   const { state } = useNarrativeStore();
@@ -34,11 +34,20 @@ const NarrativePanel = () => {
         {npEvents.map((event) => {
           if (event.type === NarrativeEventTypeEnum.SCENE_DRESSING) {
             return (
+              <p className="text-sm italic" key={event.id}>
+                {event.payload}
+              </p>
+            );
+          }
+
+          if (event.type === NarrativeEventTypeEnum.INTERACTABLE) {
+            return (
               <p className="text-sm" key={event.id}>
                 {event.payload}
               </p>
             );
           }
+
           // You can handle other event types here if needed
           return null;
         })}

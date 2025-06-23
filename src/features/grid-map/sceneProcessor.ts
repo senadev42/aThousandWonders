@@ -7,6 +7,8 @@ import {
 } from "@/features/grid-map/store/state";
 import { useGridMapState } from "@/features/grid-map/store/state";
 import {
+  Interactable,
+  InteractableTypeEnum,
   RawScene,
   SceneMetadata,
   TransitionDefinition,
@@ -146,6 +148,18 @@ const processScene = (scene: RawScene): Scene => {
     });
   }
 
+  // Parse interactables
+  let interactables: Record<string, Interactable> = {};
+  if (scene.interactables) {
+    scene.interactables.forEach(({ id, type, position }) => {
+      interactables[id] = {
+        id,
+        position,
+        type: type as InteractableTypeEnum,
+      };
+    });
+  }
+
   return {
     sceneType: SceneType.PREMADE,
     sceneId: scene.id,
@@ -155,7 +169,8 @@ const processScene = (scene: RawScene): Scene => {
     width: processedData[0].length,
     height: processedData.length,
     data: processedData,
-    transitions: transitions,
-    blockedMoves: blockedMoves,
+    transitions,
+    blockedMoves,
+    interactables,
   };
 };

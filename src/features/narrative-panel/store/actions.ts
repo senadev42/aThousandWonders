@@ -4,7 +4,7 @@ import {
 } from "@/features/narrative-panel/store/state";
 
 import sceneDressingRaw from "@/features/narrative-panel/content/sceneDescriptions.json";
-import { SceneNPDescriptions } from "./types";
+import { SceneNPDescriptions } from "../types";
 
 // Add a type assertion to allow string indexing
 const sceneDressing = sceneDressingRaw as SceneNPDescriptions;
@@ -26,12 +26,6 @@ export const useNarrativeActions = () => {
 
         if (!content) return;
 
-        console.log("Adding narrative event", {
-          id,
-          type,
-          content,
-        });
-
         const npEventsPayload = [
           ...state.npEvents,
           {
@@ -42,9 +36,6 @@ export const useNarrativeActions = () => {
         ];
 
         state.npEvents = npEventsPayload;
-
-        console.log("State of np events");
-        console.log(state.npEvents);
 
         break;
       default:

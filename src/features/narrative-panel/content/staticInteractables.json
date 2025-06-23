@@ -1,0 +1,10 @@
+{
+    "leCat_testMesshall": {
+        "normal": "The cat slowly blinks at you.",
+        "investigate": {
+            "check": 9,
+            "success": "She looks remarkably well taken care of, but there's specks of purple dust on her fur.",
+            "fail": "She looks a bit disheveled."
+        }
+    }
+}

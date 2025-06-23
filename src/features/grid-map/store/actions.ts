@@ -129,7 +129,7 @@ export const useTravelActions = () => {
         if (!initSceneparams.seed)
           throw new Error("Seed is required for random scene generation");
 
-        const width = VIEWPORT_WIDTH;
+        const width = 30;
         const height = VIEWPORT_HEIGHT;
 
         const newDungeonScene: BaseScene = generateRoomDungeon(
@@ -145,6 +145,8 @@ export const useTravelActions = () => {
           width: width,
           height: height,
         };
+
+        //
 
         break;
       }

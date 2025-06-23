@@ -1,4 +1,3 @@
-//GridMapComponent.tsx
 import { useSnapshot } from "valtio";
 import { useTravelStore } from "@/features/grid-map/store";
 import {
@@ -9,14 +8,15 @@ import {
   VIEWPORT_HEIGHT,
   VIEWPORT_WIDTH,
 } from "@/features/grid-map/store/state";
-import React, { useRef } from "react";
+import React, { useRef, useState } from "react";
 import { getFeatureIcon } from "@/features/grid-map/helpers/getTransitionIcon";
 import { resolveBackgroundImage } from "@/features/grid-map/helpers/resolveBackgroundImage";
+import { Interactable } from "@/features/grid-map/types";
 
 const ChromaticOverlay = () => {
   return (
     <div
-      className="absolute inset-0 pointer-events-none mix-blend-overlay animate-gradient"
+      className="absolute inset-10 pointer-events-none mix-blend-overlay animate-gradient"
       style={{
         background: `linear-gradient(
         30deg,
@@ -35,10 +35,28 @@ const GridMapComponent = () => {
 
   const scrollRef = useRef<HTMLDivElement | null>(null);
 
-  const backgroundImage = resolveBackgroundImage(currentScene.background);
+  // Mouse Position Tooltip
+  const [mousePos, setMousePos] = useState({ x: 0, y: 0 });
+  const [showTooltip, setShowTooltip] = useState(false);
+  const gridRef = useRef<HTMLDivElement | null>(null);
+  const handleMouseMove = (e: React.MouseEvent) => {
+    if (gridRef.current) {
+      const rect = gridRef.current.getBoundingClientRect();
+      const x = (e.clientX - rect.left) / CELL_SIZE;
+      const y = (e.clientY - rect.top) / CELL_SIZE;
+      setMousePos({ x, y });
+      setShowTooltip(true);
+    }
+  };
 
+  const handleMouseLeave = () => {
+    setShowTooltip(false);
+  };
+
+  //Grid Styling
+  const backgroundImage = resolveBackgroundImage(currentScene.background);
   const borderStyle = backgroundImage
-    ? " "
+    ? ""
     : "border-[0.5px] border-slate-900 border-opacity-1";
 
   const gridCells = currentScene.data.map((row, y) => {
@@ -87,7 +105,10 @@ const GridMapComponent = () => {
     >
       <div className="relative inline-block">
         <div
-          className="grid"
+          className="grid relative"
+          ref={gridRef}
+          onMouseMove={handleMouseMove}
+          onMouseLeave={handleMouseLeave}
           style={{
             gridTemplateColumns: `repeat(${currentScene.width}, ${CELL_SIZE}px)`,
             gridAutoRows: `${CELL_SIZE}px`,
@@ -96,11 +117,34 @@ const GridMapComponent = () => {
             ...backgroundImage,
           }}
         >
+          {/* Cells */}
+          {gridCells}
+
+          {/* Interactable Layer */}
+          {currentScene.interactables && (
+            <InteractableLayer interactables={currentScene.interactables} />
+          )}
+
+          {/* Player */}
           <Player />
 
-          {gridCells}
+          {/* Tooltip */}
+          {debugInfo.showMousePosTooltip && showTooltip && (
+            <div
+              className="absolute z-200 bg-black opacity-45 text-white px-2 py-1 rounded text-sm pointer-events-none"
+              style={{
+                left: mousePos.x * CELL_SIZE,
+                top: mousePos.y * CELL_SIZE,
+                transform: "translate(-100%, -100%)",
+                marginTop: -8,
+              }}
+            >
+              x: {mousePos.x.toFixed(2)}, y: {mousePos.y.toFixed(2)}
+            </div>
+          )}
         </div>
-        {/* {debugInfo.showCoords && <ChromaticOverlay />} */}
+        {/* Chromatic Overlay */}
+        {debugInfo.toggleOverlay && <ChromaticOverlay />}
       </div>
     </div>
   );
@@ -168,7 +212,7 @@ const Player: React.FC = () => {
 
   return (
     <div
-      className="absolute z-100"
+      className="absolute"
       style={{
         left: playerPosition.x * CELL_SIZE,
         top: playerPosition.y * CELL_SIZE,
@@ -181,4 +225,48 @@ const Player: React.FC = () => {
       </div>
     </div>
   );
+};
+
+type InteractableProps = {
+  interactables: Record<string, Interactable>;
+};
+
+const InteractableLayer: React.FC<InteractableProps> = (
+  props: InteractableProps
+) => {
+  const { interactables } = props;
+
+  const interactableElements = Object.entries(interactables).map(
+    ([id, interactable]) => {
+      const { x, y } = interactable.position;
+      return (
+        <div
+          key={id}
+          className="absolute"
+          style={{
+            left: x * CELL_SIZE,
+            top: y * CELL_SIZE,
+          }}
+        >
+          <button
+            onClick={() => {
+              alert("TODO: Implement interaction");
+            }}
+            className=" h-5 w-5 bg-slate-800 hover:bg-slate-700 opacity-50 hover:opacity-70 rounded-full rounded-full transition-colors"
+          >
+            {React.createElement(
+              getFeatureIcon(interactable.type) as React.FC<
+                React.SVGProps<SVGSVGElement>
+              >,
+              {
+                className: "size-5 text-white  ",
+              }
+            )}
+          </button>
+        </div>
+      );
+    }
+  );
+
+  return <div className="absolute">{interactableElements}</div>;
 };

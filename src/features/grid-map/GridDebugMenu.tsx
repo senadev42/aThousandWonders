@@ -44,12 +44,11 @@ const GridDebugMenu = () => {
   };
 
   return (
-    <div className="flex flex-col justify-between bg-gray-900 p-3 gap-y-4 rounded text-white text-xs">
+    <div className="flex flex-col justify-start bg-gray-900 p-3 gap-y-2 rounded text-white text-xs">
+      {/* Cell being hovered over */}
+      <p>{debugInfo.playerPosition}</p>
       {/* Debug Information */}
-      <div className="text-gray-200 space-x-2">
-        {/* Cell being hovered over */}
-        <p>{debugInfo.playerPosition}</p>
-
+      <div className="text-gray-200 space-x-2 grid grid-cols-2">
         <div className="mt-2 flex items-center  ">
           <input
             checked={debugInfo.showCoords}
@@ -66,6 +65,34 @@ const GridDebugMenu = () => {
 
         <div className="mt-2 flex items-center  ">
           <input
+            checked={debugInfo.showMousePosTooltip}
+            type="checkbox"
+            className="mr-2 size-3"
+            onChange={(e) => {
+              updateDebugSettings({
+                showMousePosTooltip: e.target.checked,
+              });
+            }}
+          />
+          <span>Show Mousetooltip</span>
+        </div>
+
+        <div className="mt-2 flex items-center  ">
+          <input
+            checked={debugInfo.toggleOverlay}
+            type="checkbox"
+            className="mr-2 size-3"
+            onChange={(e) => {
+              updateDebugSettings({
+                toggleOverlay: e.target.checked,
+              });
+            }}
+          />
+          <span>Toggle Overlay</span>
+        </div>
+
+        <div className="mt-2 flex items-center  ">
+          <input
             disabled
             checked={debugInfo.showScollbar}
             type="checkbox"
@@ -76,7 +103,7 @@ const GridDebugMenu = () => {
               });
             }}
           />
-          <span>Show Scrollbar When Overflow</span>
+          <span>Toggle Scrollbar</span>
         </div>
       </div>
 

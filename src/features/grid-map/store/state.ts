@@ -1,6 +1,6 @@
 // state.ts
 import { proxy } from "valtio";
-import { TransitionDefinition } from "@/features/grid-map/types";
+import { Interactable, TransitionDefinition } from "@/features/grid-map/types";
 import { SceneBackground } from "@/features/grid-map/helpers/resolveBackgroundImage";
 
 export const VIEWPORT_WIDTH = 13;
@@ -49,14 +49,17 @@ export type Dimensions = {
   height: number;
 };
 
-export type Scene = {
-  data: BaseScene;
-  background?: SceneBackground;
-  name?: string;
-  transitions?: Record<string, TransitionDefinition>;
-  blockedMoves?: Record<string, boolean>;
-} & Dimensions &
-  SceneParams;
+// Active grid map source of truth
+// Add stuff here to make it available to the scene
+export type Scene = Dimensions &
+  SceneParams & {
+    data: BaseScene;
+    background?: SceneBackground;
+    name?: string;
+    transitions?: Record<string, TransitionDefinition>;
+    blockedMoves?: Record<string, boolean>;
+    interactables?: Record<string, Interactable>;
+  };
 
 export interface ProcessedScenes {
   [key: string]: Scene;
@@ -66,6 +69,8 @@ export interface ProcessedScenes {
 export type DebugSettings = {
   showCoords: boolean;
   showScollbar: boolean;
+  showMousePosTooltip: boolean;
+  toggleOverlay: boolean;
 };
 
 export type DebugInfo = {
@@ -112,6 +117,8 @@ export const gridMapState = proxy<GridMapState>({
   debugSettings: {
     showCoords: false,
     showScollbar: true,
+    showMousePosTooltip: false,
+    toggleOverlay: false,
   },
 
   get debugInfo() {

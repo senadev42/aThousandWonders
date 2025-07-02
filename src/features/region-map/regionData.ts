@@ -91,7 +91,7 @@ export const regionNodeData = [
     },
   },
   {
-    name: "Nilujar Reaches",
+    name: "The Bloom Coast",
     points: [
       [587, 558],
       [579, 512],
@@ -119,7 +119,7 @@ export const regionNodeData = [
     },
   },
   {
-    name: "Lalelizan Expanse",
+    name: "The Lalehzian Approach",
     points: [
       [595, 649],
       [587, 575],
@@ -134,7 +134,7 @@ export const regionNodeData = [
     info: {
       type: "Southern Desert",
       resources: "Raw materials, Desert herbs",
-      settlements: "Lalelizan",
+      settlements: "Lalehzan",
       description:
         "Quis autem vel eum iure reprehenderit qui in ea voluptate velit esse quam nihil molestiae consequatur, vel illum qui dolorem eum fugiat quo voluptas nulla pariatur",
     },

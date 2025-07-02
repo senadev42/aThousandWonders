@@ -1,9 +1,13 @@
 import { proxy } from "valtio";
 
 export enum Views {
+  //Traversal
   REGION = "REGION",
   STRATEGIC = "STRATEGIC",
   LOCAL = "LOCAL",
+
+  //crafting?
+  ALCHEMY = "ALCHEMY",
 
   // Add more views as needed
 }

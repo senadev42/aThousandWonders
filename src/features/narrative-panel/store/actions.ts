@@ -54,8 +54,6 @@ export const useNarrativeActions = () => {
           },
         ];
 
-        console.log(staticInteractablePayload);
-
         state.npEvents = staticInteractablePayload;
         break;
 

@@ -3,6 +3,7 @@ import StrategicMap from "@/features/strategic-map/StrategicGrid";
 import TraversalInterface from "@/features/scene-ui/SceneInterface";
 import RegionMap from "@/features/region-map/RegionMap";
 import { gameState, Views } from "@/store.ts";
+import AlchemyUI from "./features/alchemy/AlchemyUI";
 
 function HeaderButton({
   view,
@@ -31,7 +32,7 @@ function Header() {
   const viewOptions = Object.values(Views);
 
   return (
-    <header className="fixed top-0 left-0 right-0 text-white p-4 py-1 flex items-center justify-between">
+    <header className="fixed bottom-0 left-0 right-0 text-white p-4 py-1 flex items-center justify-between z-50">
       {/* Title */}
       <div className="flex items-center gap-4">
         <h1 className="text-sm font-mono bg-gradient-to-r from-purple-400 to-pink-400 bg-clip-text text-transparent flex items-start">
@@ -58,12 +59,13 @@ function App() {
   const { currentView } = useSnapshot(gameState);
 
   return (
-    <div className="min-h-screen bg-slate-700 flex flex-col justify-center">
+    <div className="min-h-screen bg-slate-700 flex flex-col justify-center relative">
       <Header />
       <main className="flex items-center justify-center">
         {currentView === Views.STRATEGIC && <StrategicMap />}
         {currentView === Views.LOCAL && <TraversalInterface />}
         {currentView === Views.REGION && <RegionMap />}
+        {currentView === Views.ALCHEMY && <AlchemyUI />}
       </main>
     </div>
   );

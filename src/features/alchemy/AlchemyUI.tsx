@@ -1,4 +1,4 @@
-import { Puzzle, Pyramid, Scan, Sparkles } from "lucide-react";
+import { Puzzle, Pyramid, Search, Sparkles } from "lucide-react";
 import React, { useState } from "react";
 import { AnalysisResult, InventoryItem, ToolItem } from "./types";
 
@@ -6,6 +6,7 @@ import InventoryPanel from "./components/InventoryPanel";
 import AnalysisMatrix from "./components/ModeAnalysisMatrix";
 import ResultsPanel from "./components/ResultsPanel";
 import { performAnalysisOnMatrix } from "./helpers/performAnalysis";
+import { motion } from "framer-motion";
 
 const AlchemyWorkspace: React.FC = () => {
   const [matrixSlots, setMatrixSlots] = useState<{
@@ -64,25 +65,53 @@ const AlchemyWorkspace: React.FC = () => {
   };
 
   const modes = [
-    { icon: Scan, label: "Analysis", active: true, color: "cyan" },
+    { icon: Search, label: "Analysis", active: true, color: "cyan" },
     { icon: Pyramid, label: "Extraction", active: false, color: "purple" },
     { icon: Sparkles, label: "Refinement", active: false, color: "emerald" },
     { icon: Puzzle, label: "Synthesis", active: false, color: "amber" },
   ];
 
   return (
-    <div className="h-screen w-full bg-gradient-to-b from-black via-gray-900 via-70% to-indigo-900 text-white p-4 relative overflow-hidden scrollbar-custom">
-      {/* Starfield effect */}
-      <div className="absolute inset-0 opacity-30">
-        {[...Array(500)].map((_, i) => (
+    <div className="h-screen w-full overflow-hidde text-white p-4 relative overflow-hidden scrollbar-custom">
+      {/* Dusk */}
+      <div className="fixed inset-0 bg-gradient-to-b from-black  via-pink-900/40 via-95% to-orange-700/40" />
+
+      {/* Static starfield */}
+      <div className="fixed inset-0">
+        {/* Small white stars */}
+        {[...Array(400)].map((_, i) => (
           <div
             key={i}
-            className="absolute w-[0.5px] h-[0.5px] bg-cyan-300 rounded-full animate-pulse"
+            className="absolute w-[0.4px] h-[0.4px] bg-white rounded-full opacity-40"
             style={{
               left: `${Math.random() * 100}%`,
               top: `${Math.random() * 100}%`,
-              animationDelay: `${Math.random() * 2}s`,
-              animationDuration: `${2 + Math.random() * 3}s`,
+            }}
+          />
+        ))}
+
+        {/* Cyan stars */}
+        {[...Array(30)].map((_, i) => (
+          <div
+            key={`cyan-${i}`}
+            className="absolute w-[0.8px] h-[0.8px] bg-cyan-400 rounded-full opacity-50"
+            style={{
+              left: `${Math.random() * 100}%`,
+              top: `${Math.random() * 100}%`,
+              boxShadow: "0 0 2px #22d3ee",
+            }}
+          />
+        ))}
+
+        {/* Red stars */}
+        {[...Array(30)].map((_, i) => (
+          <div
+            key={`red-${i}`}
+            className="absolute w-[0.8px] h-[0.8px] bg-red-500 rounded-full opacity-50"
+            style={{
+              left: `${Math.random() * 100}%`,
+              top: `${Math.random() * 100}%`,
+              boxShadow: "0 0 2px #ef4444",
             }}
           />
         ))}

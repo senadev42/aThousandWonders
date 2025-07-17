@@ -1,4 +1,4 @@
-import { CircleX, Search } from "lucide-react";
+import { Search, X } from "lucide-react";
 import { useSnapshot } from "valtio";
 import { useNarrativeStore } from "@/features/narrative-panel/store";
 import { NarrativeEventTypeEnum } from "@/features/narrative-panel/types";
@@ -17,9 +17,9 @@ const NarrativePanel = () => {
             const { clearEvents } = useNarrativeStore();
             clearEvents();
           }}
-          className="bg-slate-800 hover:bg-slate-700  rounded-full transition-colors"
+          className="bg-slate-800 hover:bg-slate-700 rounded-sm transition-colors p-1"
         >
-          <CircleX className="text-slate-400 h-5" />
+          <X className="text-slate-400" size={12} />
         </button>
       </div>
 

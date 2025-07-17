@@ -6,7 +6,7 @@ const ResultsPanel: React.FC<{ analysisResults: AnalysisResult[] }> = ({
   analysisResults,
 }) => {
   return (
-    <div className="bg-slate-800/60 backdrop-blur-sm rounded-lg p-4 border border-purple-500/30 flex-1">
+    <div className="bg-slate-800/60 rounded-lg p-4 border-2 border-black flex-1">
       <h3 className="text-lg font-semibold text-purple-300 mb-4 flex items-center gap-2">
         <Eye size={16} />
         Analysis Results

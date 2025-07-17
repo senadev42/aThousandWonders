@@ -58,22 +58,25 @@ const InventoryPanel: React.FC<{
   const InfoPanel: React.FC<{ item: InventoryItem | ToolItem }> = ({
     item,
   }) => (
-    <div className="bg-slate-800/60 backdrop-blur-sm rounded-lg p-6 border border-cyan-500/30 max-w-md">
+    <div className="bg-slate-800/40 rounded-sm p-3 borderborder-cyan-500/30 max-w-md">
+      {/* Top Header part */}
       <div className="flex justify-between items-center mb-2 gap-2">
         <h3 className="text-base font-bold text-cyan-300 flex-1">
           {item.name}
         </h3>
         <div className="flex items-center gap-1.5 text-amber-300">
           <Coins size={12} className="opacity-90" />
-          <span className="font-medium">{item.marketPrice}g</span>
+          <span className="font-medium text-sm">{item.marketPrice}g</span>
         </div>
         <button
           onClick={() => setSelectedInfo(null)}
-          className="text-cyan-400 hover:text-cyan-300 transition-colors p-1 rounded-full bg-cyan-900/50 hover:bg-cyan-800 backdrop-blur-sm"
+          className="text-cyan-400 hover:text-cyan-300 transition-colors p-1 rounded-sm bg-cyan-900/50 hover:bg-cyan-800 backdrop-blur-sm"
         >
-          <X size={16} />
+          <X size={12} />
         </button>
       </div>
+
+      <hr className="border-cyan-500/30 my-2" />
 
       <p className="text-cyan-200/90 leading-relaxed mb-4 text-xs">
         {item.description}
@@ -204,7 +207,7 @@ const InventoryPanel: React.FC<{
   return (
     <div className="space-y-4">
       {/* Rest of the component remains the same */}
-      <div className="bg-slate-800/60 backdrop-blur-sm rounded-lg p-4 border border-cyan-500/30 flex-1">
+      <div className="bg-slate-800/40 rounded-sm p-3 border border-cyan-500/30 flex-1">
         <div className="flex gap-2 mb-2">
           <button
             onClick={() => setActiveTab("inventory")}

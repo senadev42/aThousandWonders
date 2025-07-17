@@ -2,6 +2,7 @@ import { useSnapshot } from "valtio";
 import { useTravelStore } from "@/features/grid-map/store";
 import {
   BaseCell,
+  BaseScene,
   BaseTiles,
   CELL_SIZE,
   DebugInfo,
@@ -13,19 +14,35 @@ import { getFeatureIcon } from "@/features/grid-map/helpers/getFeatureIcon";
 import { resolveBackgroundImage } from "@/features/grid-map/helpers/resolveBackgroundImage";
 import { Interactable, InteractableTypeEnum } from "@/features/grid-map/types";
 
-const ChromaticOverlay = () => {
+const ChromaticOverlay: React.FC<{ gridData: BaseScene }> = ({ gridData }) => {
   return (
-    <div
-      className="absolute inset-10 pointer-events-none mix-blend-overlay animate-gradient"
-      style={{
-        background: `linear-gradient(
-        30deg,
-        rgba(255, 240, 79, 0.3) 0%, 
-        rgba(224, 213, 0, 0.3) 100%)
-        `,
-        filter: "blur(20px)",
-      }}
-    />
+    <div className="absolute inset-0 pointer-events-none">
+      {gridData.map((row, y) =>
+        row.map((cell, x) => {
+          // Only show overlay on revealed floor tiles
+          const shouldShow = cell.type === BaseTiles.FLOOR && cell.revealed;
+
+          return shouldShow ? (
+            <div
+              key={`overlay-${x}-${y}`}
+              className="absolute mix-blend-overlay animate-gradient"
+              style={{
+                left: `${x * CELL_SIZE}px`,
+                top: `${y * CELL_SIZE}px`,
+                width: `${CELL_SIZE}px`,
+                height: `${CELL_SIZE}px`,
+                background: `linear-gradient(
+                  30deg,
+                  rgba(255, 240, 79, 0.3) 0%, 
+                  rgba(224, 213, 0, 0.3) 100%
+                )`,
+                filter: "blur(4px)",
+              }}
+            />
+          ) : null;
+        })
+      )}
+    </div>
   );
 };
 
@@ -147,7 +164,9 @@ const GridMapComponent = () => {
           )}
         </div>
         {/* Chromatic Overlay */}
-        {debugInfo.toggleOverlay && <ChromaticOverlay />}
+        {debugInfo.toggleOverlay && (
+          <ChromaticOverlay gridData={currentScene.data as BaseScene} />
+        )}
       </div>
     </div>
   );
